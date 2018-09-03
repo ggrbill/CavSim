@@ -1,2 +1,2 @@
 # CavSim
-Cavity Simulator 
+The Lid-driven cavity simulator
