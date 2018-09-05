@@ -1,0 +1,7 @@
+name: CavSim
+channels:
+- defaults
+- conda-forge
+dependencies:
+- python=3.6.1=2
+- cmake>=3.9
