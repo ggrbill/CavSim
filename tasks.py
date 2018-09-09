@@ -53,11 +53,13 @@ def build(ctx, cclean=False):
 		'cd ' + project_pwd,
 		'mkdir build',
 		'cd build',
-		'cmake ..',
+		'mkdir makefiles',
+		'cd makefiles',
+		'cmake ../..',
 		'cmake --build .',
 	]
 	ctx.run(' && '.join(commands))
-	
+
 
 @task()
 def run_case_ex(ctx):
@@ -66,7 +68,7 @@ def run_case_ex(ctx):
 	"""
 	project_name, project_pwd = get_project_name_and_root_for_cwd()
 	orig_folder = project_pwd + '/src/cpp/inCav.txt '
-	dest_folder = project_pwd + '/build/bin '
+	dest_folder = project_pwd + '/build/makefiles/bin '
 
 	commands = [
 		'cp ' + orig_folder + dest_folder,
