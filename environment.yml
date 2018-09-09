@@ -4,4 +4,5 @@ channels:
 - conda-forge
 dependencies:
 - python=3.6.1=2
+- invoke>0.22.1
 - cmake>=3.9
