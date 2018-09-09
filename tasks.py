@@ -1,7 +1,7 @@
 from invoke import task 
 import os
 
-def get_project_name_and_root_for_cwd():
+def get_project_name_and_folder():
     """
     :return: The Name and root directory of the current project from the current working dir.
     """
@@ -23,7 +23,7 @@ def clean(ctx):
 	"""
 	Delete 'build' folder.
 	"""
-	project_name, project_pwd = get_project_name_and_root_for_cwd()
+	project_name, project_pwd = get_project_name_and_folder()
 	ctx.run('cd ' + project_pwd)
 
 	print("Cleaning!")
@@ -46,7 +46,7 @@ def build(ctx, cclean=False):
 	if cclean:
 		clean(ctx)
 	
-	project_name, project_pwd = get_project_name_and_root_for_cwd()
+	project_name, project_pwd = get_project_name_and_folder()
 	
 	print("Building!")
 	commands = [
@@ -66,7 +66,7 @@ def run_case_ex(ctx):
 	"""
 	Run an example case.
 	"""
-	project_name, project_pwd = get_project_name_and_root_for_cwd()
+	project_name, project_pwd = get_project_name_and_folder()
 	orig_folder = project_pwd + '/src/cpp/inCav.txt '
 	dest_folder = project_pwd + '/build/makefiles/bin '
 
