@@ -3,7 +3,7 @@ import os
 
 def get_project_name_and_folder():
     """
-    :return: The Name and root directory of the current project from the current working dir.
+    :return: The Name and Root Directory of the current project from the current working dir.
     """
     filename = 'environment.yml'
     directory = os.path.abspath(os.curdir)
@@ -36,7 +36,7 @@ def clean(ctx):
 
 @task(
 	help = {
-		'cclean': "Call Clean task (Delete 'build' folder) before build again."
+		'cclean': "Call 'clean' task (Delete 'build' folder) before build again."
 	}
 )
 def build(ctx, cclean=False):
