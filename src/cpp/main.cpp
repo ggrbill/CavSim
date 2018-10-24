@@ -8,6 +8,8 @@
 #include <iomanip>
 #include <math.h>
 
+#include "solver.hpp"
+
 using namespace std;
 
 //MATRIZES DE RESULTADOS
@@ -37,7 +39,7 @@ double **Ae_v;
 double **An_v;
 double **As_v;
 double **B_v;
-// Pressão
+// Pressï¿½o
 double **Ap_p;
 double **Aw_p;
 double **Ae_p;
@@ -45,7 +47,7 @@ double **An_p;
 double **As_p;
 double **B_p;
 
-// VARIÁVEIS DE ENTRADA
+// VARIï¿½VEIS DE ENTRADA
 double L;	// Largura 
 double H;	// Altura
 int    nv;	// Numero de Linhas e Colunas
@@ -53,7 +55,7 @@ double rho;	// Massa Especifica
 double U;	// Velocidade na Fronteira Norte
 double mi;	// Viscosidade
 
-// VARIÁVEIS DE INTERPOLAÇÃO NAS FRONTEIRAS
+// VARIï¿½VEIS DE INTERPOLAï¿½ï¿½O NAS FRONTEIRAS
 struct fronteiras{
 	double e;
 	double w;
@@ -76,7 +78,7 @@ int verifica = 0;
 int N_ITE = 0;
 double T = 0;
 
-void read_in() // Lê os Dados de Entrada
+void read_in() // Lï¿½ os Dados de Entrada
 {
 	
 	fstream fin("./inCav.txt");
@@ -89,10 +91,10 @@ void read_in() // Lê os Dados de Entrada
 	fin.close();
 }
 
-void Alocate() // Aloca e Inicializa Variáveis
+void Alocate() // Aloca e Inicializa Variï¿½veis
 {
 	
-	//Alocando Memória
+	//Alocando Memï¿½ria
 
 	// u   Velocidade-x
 	u     = new double *[nv-1];
@@ -168,7 +170,7 @@ void Alocate() // Aloca e Inicializa Variáveis
 			B_v[i][j]  = 0.;
 		}
 	}
-	// Pressão
+	// Pressï¿½o
 	P     = new double *[nv];
 	Pn    = new double *[nv];
 	Ap_p  = new double *[nv];
@@ -204,7 +206,7 @@ void Alocate() // Aloca e Inicializa Variáveis
 	}
 	// Dados nas Fronteiras
 	
-	// Direção x - Malha de u
+	// Direï¿½ï¿½o x - Malha de u
 	Re_x     = new fronteiras *[nv-1];
 	alpha_x  = new fronteiras *[nv-1];
 	beta_x   = new fronteiras *[nv-1];
@@ -232,7 +234,7 @@ void Alocate() // Aloca e Inicializa Variáveis
 			beta_x[i][j].s   = 0.;
 		}
 	}
-	// Direção y - Malha de v
+	// Direï¿½ï¿½o y - Malha de v
 	Re_y     = new fronteiras *[nv];
 	alpha_y  = new fronteiras *[nv];
 	beta_y   = new fronteiras *[nv];
@@ -965,104 +967,6 @@ void Correcao_u_v()
 	}
 }
 
-
-int SOR(int MAX,float  w)
-{
-   cout << "Resolv. Pressão ";
-   N_ITE = 0;
-   verifica = 0;
-   T = 0;
-   while(verifica != 1)
-   {
-	N_ITE++;   
-	T = 0;
-   	for(int i=0; i<nv; i++)
-	{
-		for(int j=0; j<nv; j++)
-		{
-			P[i][j]  = Pn[i][j];
-		}
-	}
-
-	//Canto Superior Esquerdo
-	Pn[0][nv-1] = B_p[0][nv-1]; 
-	Pn[0][nv-1] += (As_p[0][nv-1]*Pn[0][nv-2]+ Ae_p[0][nv-1]*Pn[1][nv-1]);
-	Pn[0][nv-1] /= Ap_p[0][nv-1];
-	Pn[0][nv-1] = w*Pn[0][nv-1] + (1-w)*P[0][nv-1];
-
-	//Fronteira Norte
-	for(int i=1; i<=(nv-2); i++)
-	{
-			Pn[i][nv-1] = B_p[i][nv-1]; 
-			Pn[i][nv-1] += (Aw_p[i][nv-1]*Pn[i-1][nv-1] + Ae_p[i][nv-1]*Pn[i+1][nv-1] + As_p[i][nv-1]*Pn[i][nv-2]);
-			Pn[i][nv-1] /= Ap_p[i][nv-1];
-			Pn[i][nv-1] = w*Pn[i][nv-1] + (1-w)*P[i][nv-1];
-	}
-
-	//Canto Superior Direito
-	Pn[nv-1][nv-1] = B_p[nv-1][nv-1]; 
-	Pn[nv-1][nv-1] += (As_p[nv-1][nv-1]*Pn[nv-1][nv-2]+ Aw_p[nv-1][nv-1]*Pn[nv-2][nv-1]);
-	Pn[nv-1][nv-1] /= Ap_p[nv-1][nv-1];
-	Pn[nv-1][nv-1] = w*Pn[nv-1][nv-1] + (1-w)*P[nv-1][nv-1];
-
-	for(int j=(nv-2);j>=1;j--)
-	{
-		//Fronteira Oeste
-		Pn[0][j] = B_p[0][j]; 
-		Pn[0][j] += (As_p[0][j]*Pn[0][j-1] + Ae_p[0][j]*Pn[1][j] + An_p[0][j]*Pn[0][j+1]);
-		Pn[0][j] /= Ap_p[0][j];
-		Pn[0][j] = w*Pn[0][j] + (1-w)*P[0][j];
-		// Volumes Centrais
-		for(int i=1; i<=(nv-2); i++)
-		{ 
-			Pn[i][j] = B_p[i][j]; 
-			Pn[i][j] += (As_p[i][j]*Pn[i][j-1] + Aw_p[i][j]*Pn[i-1][j] + Ae_p[i][j]*Pn[i+1][j] + An_p[i][j]*Pn[i][j+1]);
-			Pn[i][j] /= Ap_p[i][j];
-			Pn[i][j] = w*Pn[i][j] + (1-w)*P[i][j];
-	   	}
-		//Fronteira Leste
-		Pn[nv-1][j] = B_p[nv-1][j]; 
-		Pn[nv-1][j] += (As_p[nv-1][j]*Pn[nv-1][j-1] + Aw_p[nv-1][j]*Pn[nv-2][j] + An_p[nv-1][j]*Pn[nv-1][j+1]);
-		Pn[nv-1][j] /= Ap_p[nv-1][j];
-		Pn[nv-1][j] = w*Pn[nv-1][j] + (1-w)*P[nv-1][j];
-	}
-
-	// Canto Inferior Esquerdo	
-	Pn[0][0] = B_p[0][0]; 
-	Pn[0][0] += (An_p[0][0]*Pn[0][1]+ Ae_p[0][0]*Pn[1][0]);
-	Pn[0][0] /= Ap_p[0][0];
-	Pn[0][0] = w*Pn[0][0] + (1-w)*P[0][0];	
-	// Fronteira Sul
-	for(int i=1; i<=(nv-2); i++)
-	{
-			Pn[i][0] = B_p[i][0]; 
-			Pn[i][0] += (Aw_p[i][0]*Pn[i-1][0] + Ae_p[i][0]*Pn[i+1][0] + An_p[i][0]*Pn[i][1]);
-			Pn[i][0] /= Ap_p[i][0];
-			Pn[i][0] = w*Pn[i][0] + (1-w)*P[i][0];
-	}
-	//Canto Inferior Direito
-	Pn[nv-1][0] = B_p[nv-1][0]; 
-	Pn[nv-1][0] += (An_p[nv-1][0]*Pn[nv-1][1]+ Aw_p[nv-1][0]*Pn[nv-2][0]);
-	Pn[nv-1][0] /= Ap_p[nv-1][0];
-	Pn[nv-1][0] = w*Pn[nv-1][0] + (1-w)*P[nv-1][0];
-
-	for(int i=0; i<nv; i++)
-	{
-		for(int j=0; j<nv; j++)
-		{
-			T += pow((P[i][j] - Pn[i][j]),2.0);
-		}
-	}
-	T = sqrt(T);
-	if ( (T < (0.0001)) or (N_ITE == MAX) )
-	{
-		verifica = 1;
-	}	
-   }
-   cout << N_ITE << " Iterações ";
-
-}
-
 double Erro_u()
 {
 	double erro = 0.;
@@ -1090,7 +994,7 @@ double Erro_v()
 	return erro;	
 }
 
-void Destroy()  //Limpando Memória
+void Destroy()  //Limpando Memï¿½ria
 {
 	delete [] u;
 	delete [] v;
@@ -1214,7 +1118,7 @@ void GravaArquivo()
 	  fout << endl;
 	  fout << endl;
 
-	  // PRESSÃO
+	  // PRESSï¿½O
 	  k=0;
           for(int j=0; j < (nv); j++ )
 	  {
@@ -1254,7 +1158,7 @@ int main()
 	dx = L/nv; 
 	dy = H/nv;
 	
-	Alocate(); // Alocando Variáveis na Memória
+	Alocate(); // Alocando Variï¿½veis na Memï¿½ria
 	int IT = 0;
 	int TESTE =0;
 	double eu = 0.;
@@ -1268,12 +1172,15 @@ int main()
 		Calc_u_hat();
 		Calc_v_hat();
 		Calc_Coef_Pressao();
-		SOR(50,1.6);	
+		SOR_structured(Ap_p, Aw_p, Ae_p, An_p, As_p, 
+			P, Pn, B_p, 
+			nv, 50, 1.6
+		);	
 		Correcao_u_v();
 		cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 		if((IT % 500) == 0)
 		{
-			cout << endl << "......Gravando Solução Parcial....." << endl;
+			cout << endl << "......Gravando Soluï¿½ï¿½o Parcial....." << endl;
 			GravaArquivo();
 		}
 		if( ((Erro_u() < (0.0001)) and ( Erro_v() < (0.0001) )) or (IT == 100000) )
@@ -1288,11 +1195,14 @@ int main()
 	Calc_u_hat();
 	Calc_v_hat();
 	Calc_Coef_Pressao();
-	SOR(1000,1.6);	
+	SOR_structured(Ap_p, Aw_p, Ae_p, An_p, As_p, 
+			P, Pn, B_p, 
+			nv, 1000, 1.6
+		);	
 	Correcao_u_v();
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 	GravaArquivo();
 
-	Destroy(); // Deletando Variáveis da Memória
+	Destroy(); // Deletando Variï¿½veis da Memï¿½ria
 }
 
