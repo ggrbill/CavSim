@@ -1,5 +1,3 @@
-//Este Programa Simula o Problema da Cavidade Isolada a Oeste, Leste e Sul com uma Velocidade Tangencial U em Norte
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -12,7 +10,7 @@
 
 using namespace std;
 
-//MATRIZES DE RESULTADOS
+// Resulta matrices
 double **u;
 double **v;
 double **uOLD;
@@ -22,24 +20,22 @@ double **Pn;
 double **u_hat;
 double **v_hat;
 
-
-// MATRIZES DE COEFICIENTES
-
-// Velocidade em x - u
+// Coefficients Matrices
+// x-velocity - u
 double **Ap_u;
 double **Aw_u;
 double **Ae_u;
 double **An_u;
 double **As_u;
 double **B_u;
-// Velocidade em y - v
+// y-velocity - v
 double **Ap_v;
 double **Aw_v;
 double **Ae_v;
 double **An_v;
 double **As_v;
 double **B_v;
-// Press�o
+// Pressure
 double **Ap_p;
 double **Aw_p;
 double **Ae_p;
@@ -47,15 +43,15 @@ double **An_p;
 double **As_p;
 double **B_p;
 
-// VARI�VEIS DE ENTRADA
-double L;	// Largura 
-double H;	// Altura
-int    nv;	// Numero de Linhas e Colunas
-double rho;	// Massa Especifica
-double U;	// Velocidade na Fronteira Norte
-double mi;	// Viscosidade
+// Input data
+double L;	// Length 
+double H;	// Height
+int    nv;	// Number of rows and columns
+double rho;	// density
+double U;	// velocity at north boundary
+double mi;	// viscosity
 
-// VARI�VEIS DE INTERPOLA��O NAS FRONTEIRAS
+// Control Volume Boundaries interpolation
 struct fronteiras{
 	double e;
 	double w;
@@ -73,14 +69,8 @@ fronteiras **beta_y;
 double dx = 0.;
 double dy = 0.;
 
-//Variaveis auxiliares
-int verifica = 0;
-int N_ITE = 0;
-double T = 0;
-
-void read_in() // L� os Dados de Entrada
+void read_in() // Read input data
 {
-	
 	fstream fin("./inCav.txt");
 	fin >>  L;
 	fin >>  H;
@@ -91,12 +81,11 @@ void read_in() // L� os Dados de Entrada
 	fin.close();
 }
 
-void Alocate() // Aloca e Inicializa Vari�veis
+void Alocate() // Alocate e initialize arrays (matrices)
 {
-	
-	//Alocando Mem�ria
+	// Alocating
 
-	// u   Velocidade-x
+	// u - x-velocity
 	u     = new double *[nv-1];
 	uOLD  = new double *[nv-1];
 	u_hat = new double *[nv-1];
@@ -133,7 +122,7 @@ void Alocate() // Aloca e Inicializa Vari�veis
 			B_u[i][j]  = 0.;
 		}
 	}
-	// v   Velocidade-y
+	// v - y-velocity
 	v     = new double *[nv];
 	vOLD  = new double *[nv];
 	v_hat = new double *[nv];
@@ -170,7 +159,7 @@ void Alocate() // Aloca e Inicializa Vari�veis
 			B_v[i][j]  = 0.;
 		}
 	}
-	// Press�o
+	// Pressure
 	P     = new double *[nv];
 	Pn    = new double *[nv];
 	Ap_p  = new double *[nv];
@@ -204,9 +193,9 @@ void Alocate() // Aloca e Inicializa Vari�veis
 			B_p[i][j] = 0.;
 		}
 	}
-	// Dados nas Fronteiras
+	// Control volumes boundaries data
 	
-	// Dire��o x - Malha de u
+	// x-dir - mesh for u
 	Re_x     = new fronteiras *[nv-1];
 	alpha_x  = new fronteiras *[nv-1];
 	beta_x   = new fronteiras *[nv-1];
@@ -234,7 +223,7 @@ void Alocate() // Aloca e Inicializa Vari�veis
 			beta_x[i][j].s   = 0.;
 		}
 	}
-	// Dire��o y - Malha de v
+	// y-dir - mesh for v
 	Re_y     = new fronteiras *[nv];
 	alpha_y  = new fronteiras *[nv];
 	beta_y   = new fronteiras *[nv];
@@ -265,9 +254,9 @@ void Alocate() // Aloca e Inicializa Vari�veis
 	
 }
 
-void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
+void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 {
-	//Volume do Canto Inferior Esquerdo
+	// Left-bottom corner
 	Re_x[0][0].e = (rho*((u[0][0]+u[1][0])/2.)*dx)/mi;
 	Re_x[0][0].n = (rho*((v[0][0]+v[1][0])/2.)*dy)/mi;
 	Re_x[0][0].w = (rho*(u[0][0]/2.)*dx)/mi;
@@ -293,7 +282,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 	Ap_u[0][0] = Ae_u[0][0] + Aw_u[0][0] + An_u[0][0] + As_u[0][0];
 	B_u[0][0] = 0.;
 
-	//Volume do Canto Inferior Direito
+	// Right-bottom corner
 	Re_x[nv-2][0].e = (rho*((u[nv-2][0])/2.)*dx)/mi;
 	Re_x[nv-2][0].n = (rho*((v[nv-2][0]+v[nv-1][0])/2.)*dx)/mi;
 	Re_x[nv-2][0].w = (rho*((u[nv-2][0]+u[nv-3][0])/2.)*dx)/mi; 
@@ -319,7 +308,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 	Ap_u[nv-2][0] = Ae_u[nv-2][0] + Aw_u[nv-2][0] + An_u[nv-2][0] + As_u[nv-2][0];
 	B_u[nv-2][0] = 0.;
 	
-	//Volume do Canto Superior Esquerdo
+	// Left-up corner
 	Re_x[0][nv-1].e = (rho*((u[0][nv-1]+u[1][nv-1])/2.)*dx)/mi;
 	Re_x[0][nv-1].n = 0.; //(rho*(U)*dx)/mi;
 	Re_x[0][nv-1].w = (rho*(u[0][nv-1]/2.)*dx)/mi;
@@ -345,7 +334,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 	Ap_u[0][nv-1] = Ae_u[0][nv-1] + Aw_u[0][nv-1] + An_u[0][nv-1] + As_u[0][nv-1];
 	B_u[0][nv-1] = ((2.*mi*beta_x[0][nv-1].n*U*dx)/dy);
 	
-	//Volume do Canto Superior Direito
+	// Right-up corner
 	Re_x[nv-2][nv-1].e = (rho*((u[nv-2][nv-1])/2.)*dx)/mi;
 	Re_x[nv-2][nv-1].n = 0.; //(rho*(U)*dx)/mi;
 	Re_x[nv-2][nv-1].w = (rho*((u[nv-2][nv-1]+u[nv-3][nv-1])/2.)*dx)/mi;
@@ -371,7 +360,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 	Ap_u[nv-2][nv-1] = Ae_u[nv-2][nv-1] + Aw_u[nv-2][nv-1] + An_u[nv-2][nv-1] + As_u[nv-2][nv-1];
 	B_u[nv-2][nv-1] = ((2.*mi*beta_x[nv-2][nv-1].n*U*dx)/dy);
 
-	//Volumes da Fronteira Norte
+	// North boundary volumes
 	for(int i=1;i<(nv-2);i++)
 	{
 		Re_x[i][nv-1].e = (rho*((u[i][nv-1]+u[i+1][nv-1])/2.)*dx)/mi;
@@ -400,7 +389,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 		B_u[i][nv-1] = ((2.*mi*beta_x[i][nv-1].n*U*dx)/dy);
 	}
 
-	//Volumes da Fronteira Sul
+	// South boundary volumes
 	for(int i=1;i<(nv-2);i++)
 	{
 		Re_x[i][0].e = (rho*((u[i][0]+u[i+1][0])/2.)*dx)/mi;
@@ -429,7 +418,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 		B_u[i][0] = 0.;
 	}
 	
-	//Volumes da Fronteira Leste
+	// East boundary volumes
 	for(int j=1;j<(nv-1);j++)
 	{
 		Re_x[nv-2][j].e = (rho*((u[nv-2][j])/2.)*dx)/mi;
@@ -458,7 +447,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 		B_u[nv-2][j] = 0.;
 	}
 	
-	//Volumes da Fronteira oeste
+	// West boundary volumes
 	for(int j=1;j<(nv-1);j++)
 	{
 		Re_x[0][j].e = (rho*((u[0][j]+u[1][j])/2.)*dx)/mi;
@@ -486,7 +475,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 		Ap_u[0][j] = Ae_u[0][j] + Aw_u[0][j] + An_u[0][j] + As_u[0][j];
 		B_u[0][j] = 0.;
 	}
-	//Volumes Centrais
+	// Core volumes
 	for(int i=1;i<(nv-2);i++)
 	{
 		for(int j=1;j<(nv-1);j++)
@@ -522,7 +511,7 @@ void Calc_Coef_NS_X()  //Calculo dos Coeficientes de u - NS_x
 
 void Calc_Coef_NS_Y()
 {
-	// Volume do Canto inferior Esquerdo
+	// Left-bottom corner
 	Re_y[0][0].e = (rho*((u[0][0]+u[0][1])/2.)*dy)/mi;
 	Re_y[0][0].n = (rho*((v[0][1]+v[0][0])/2.)*dy)/mi;
 	Re_y[0][0].w = 0.;
@@ -548,7 +537,7 @@ void Calc_Coef_NS_Y()
 	Ap_v[0][0] = Ae_v[0][0] + Aw_v[0][0] + An_v[0][0] + As_v[0][0];
 	B_v[0][0] = 0.;
 
-	// Volume do Canto Inferior Direito
+	// Right-bottom corner
 	Re_y[nv-1][0].e = 0.;
 	Re_y[nv-1][0].n = (rho*((v[nv-1][1]+v[nv-1][0])/2.)*dy)/mi;
 	Re_y[nv-1][0].w = (rho*((u[nv-2][0]+u[nv-2][1])/2.)*dy)/mi;
@@ -574,7 +563,7 @@ void Calc_Coef_NS_Y()
 	Ap_v[nv-1][0] = Ae_v[nv-1][0] + Aw_v[nv-1][0] + An_v[nv-1][0] + As_v[nv-1][0];
 	B_v[nv-1][0] = 0.;
 
-	//Volume do Canto Superior Esquerdo
+	// Left-up corner
 	Re_y[0][nv-2].e = (rho*((u[0][nv-2]+u[0][nv-1])/2.)*dy)/mi;
 	Re_y[0][nv-2].n = (rho*((v[0][nv-2])/2.)*dy)/mi;
 	Re_y[0][nv-2].w = 0.;
@@ -600,7 +589,7 @@ void Calc_Coef_NS_Y()
 	Ap_v[0][nv-2] = Ae_v[0][nv-2] + Aw_v[0][nv-2] + An_v[0][nv-2] + As_v[0][nv-2];
 	B_v[0][nv-2] = 0.;
 
-	//Volume do Canto Superior Direito
+	// Right-up corner
 	Re_y[nv-1][nv-2].e = 0.;
 	Re_y[nv-1][nv-2].n = (rho*((v[nv-1][nv-2])/2.)*dy)/mi;
 	Re_y[nv-1][nv-2].w = (rho*((u[nv-2][nv-2]+u[nv-2][nv-1])/2.)*dy)/mi;
@@ -626,7 +615,7 @@ void Calc_Coef_NS_Y()
 	Ap_v[nv-1][nv-2] = Ae_v[nv-1][nv-2] + Aw_v[nv-1][nv-2] + An_v[nv-1][nv-2] + As_v[nv-1][nv-2];
 	B_v[nv-1][nv-2] = 0.;
 
-	//Volumes da Fronteira Norte
+	// North boundary volumes
 	for(int i=1;i<(nv-1);i++)
 	{
 		Re_y[i][nv-2].e = (rho*((u[i][nv-2]+u[i][nv-1])/2.)*dy)/mi;
@@ -654,7 +643,7 @@ void Calc_Coef_NS_Y()
 		Ap_v[i][nv-2] = Ae_v[i][nv-2] + Aw_v[i][nv-2] + An_v[i][nv-2] + As_v[i][nv-2];
 		B_v[i][nv-2] = 0.;
 	}
-	//Volumes da Fronteira Sul
+	// South boundary volumes
 	for(int i=1;i<(nv-1);i++)
 	{
 		Re_y[i][0].e = (rho*((u[i][0]+u[i][1])/2.)*dy)/mi;
@@ -682,7 +671,7 @@ void Calc_Coef_NS_Y()
 		Ap_v[i][0] = Ae_v[i][0] + Aw_v[i][0] + An_v[i][0] + As_v[i][0];
 		B_v[i][0] = 0.;
 	}
-	//Volumes da Fronteira Leste
+	// East boundary volumes
 	for(int j=1;j<(nv-2);j++)
 	{
 		Re_y[nv-1][j].e = 0.;
@@ -710,7 +699,7 @@ void Calc_Coef_NS_Y()
 		Ap_v[nv-1][j] = Ae_v[nv-1][j] + Aw_v[nv-1][j] + An_v[nv-1][j] + As_v[nv-1][j];
 		B_v[nv-1][j] = 0.;
 	}
-	//Volumes da Fronteira Oeste
+	// West boundary volumes
 	for(int j=1;j<(nv-2);j++)
 	{
 		Re_y[0][j].e = (rho*((u[0][j]+u[0][j+1])/2.)*dy)/mi;
@@ -738,7 +727,7 @@ void Calc_Coef_NS_Y()
 		Ap_v[0][j] = Ae_v[0][j] + Aw_v[0][j] + An_v[0][j] + As_v[0][j];
 		B_v[0][j] = 0.;
 	}
-	//Volumes Centrais
+	// Core volummes
 	for(int i=1;i<(nv-1);i++)
 	{
 		for(int j=1;j<(nv-2);j++)
@@ -773,35 +762,35 @@ void Calc_Coef_NS_Y()
 
 void Calc_u_hat()
 {
-	// Canto Superior Esquerdo
+	// Left-up Corner
 	u_hat[0][nv-1] = ((Ae_u[0][nv-1]*u[1][nv-1])+(As_u[0][nv-1]*u[0][nv-2])+(B_u[0][nv-1]))/Ap_u[0][nv-1];
-	// Canto Superior Direito
+	// Right-up corner
 	u_hat[nv-2][nv-1] = ((Aw_u[nv-2][nv-1]*u[nv-3][nv-1])+(As_u[nv-2][nv-1]*u[nv-2][nv-2])+(B_u[nv-2][nv-1]))/Ap_u[nv-2][nv-1];
-	// Canto Inferior Esquerdo
+	// Left-bottom corner
 	u_hat[0][0] = ((Ae_u[0][0]*u[1][0])+(An_u[0][0]*u[0][1])+(B_u[0][0]))/Ap_u[0][0];
-	// Canto Inferior Direito
+	// Right-bottom corner
 	u_hat[nv-2][0] = ((Aw_u[nv-2][0]*u[nv-3][0])+(An_u[nv-2][0]*u[nv-2][1])+(B_u[nv-2][0]))/Ap_u[nv-2][0];
-	// Fronteira Leste
+	// East boundary
 	for(int j=1;j<(nv-1);j++)
 	{
 		u_hat[nv-2][j] = ((Aw_u[nv-2][j]*u[nv-3][j])+(An_u[nv-2][j]*u[nv-2][j+1])+(As_u[nv-2][j]*u[nv-2][j-1])+(B_u[nv-2][j]))/Ap_u[nv-2][j];
 	}
-	// Fronteira Oeste
+	// West boundary
 	for(int j=1;j<(nv-1);j++)
 	{
 		u_hat[0][j] = ((Ae_u[0][j]*u[1][j])+(An_u[0][j]*u[0][j+1])+(As_u[0][j]*u[0][j-1])+(B_u[0][j]))/Ap_u[0][j];
 	}
-	// Fronteira Norte
+	// North boundary
 	for(int i=1;i<(nv-2);i++)
 	{
 		u_hat[i][nv-1] = ((Ae_u[i][nv-1]*u[i+1][nv-1])+(Aw_u[i][nv-1]*u[i-1][nv-1])+(As_u[i][nv-1]*u[i][nv-2])+(B_u[i][nv-1]))/Ap_u[i][nv-1];
 	}
-	// Fronteira Sul
+	// South boundary
 	for(int i=1;i<(nv-2);i++)
 	{
 		u_hat[i][0] = ((Ae_u[i][0]*u[i+1][0])+(Aw_u[i][0]*u[i-1][0])+(An_u[i][0]*u[i][1])+(B_u[i][0]))/Ap_u[i][0];
 	}
-	// Volumes Centrais
+	// Core volumes
 	for(int i=1;i<(nv-2);i++)
 	{
 		for(int j=1;j<(nv-1);j++)
@@ -813,35 +802,35 @@ void Calc_u_hat()
 
 void Calc_v_hat()
 {
-	// Canto Superior Esquerdo
+	// Left-up Corner
 	v_hat[0][nv-2] = ((Ae_v[0][nv-2]*v[1][nv-2])+(As_v[0][nv-2]*v[0][nv-3])+(B_v[0][nv-2]))/Ap_v[0][nv-2];
-	// Canto Superior Direito
+	// Right-up corner
 	v_hat[nv-1][nv-2] = ((Aw_v[nv-1][nv-2]*v[nv-2][nv-2])+(As_v[nv-1][nv-2]*v[nv-1][nv-3])+(B_v[nv-1][nv-2]))/Ap_v[nv-1][nv-2];
-	// Canto Inferior Esquerdo
+	// Left-bottom corner
 	v_hat[0][0] = ((Ae_v[0][0]*v[1][0])+(An_v[0][0]*v[0][1])+(B_v[0][0]))/Ap_v[0][0];
-	// Canto Inferior Direito
+	// Right-bottom corner
 	v_hat[nv-1][0] = ((Aw_v[nv-1][0]*v[nv-2][0])+(An_v[nv-1][0]*v[nv-1][1])+(B_v[nv-1][0]))/Ap_v[nv-1][0];
-	// Fronteira Leste
+	// East boundary
 	for(int j=1;j<(nv-2);j++)
 	{
 		v_hat[nv-1][j] = ((Aw_v[nv-1][j]*v[nv-2][j])+(An_v[nv-1][j]*v[nv-1][j+1])+(As_v[nv-1][j]*v[nv-1][j-1])+(B_v[nv-1][j]))/Ap_v[nv-1][j];
 	}
-	// Fronteira Oeste
+	// West boundary
 	for(int j=1;j<(nv-2);j++)
 	{
 		v_hat[0][j] = ((Ae_v[0][j]*v[1][j])+(An_v[0][j]*v[0][j+1])+(As_v[0][j]*v[0][j-1])+(B_v[0][j]))/Ap_v[0][j];
 	}
-	// Fronteira Norte
+	// North boundary
 	for(int i=1;i<(nv-1);i++)
 	{
 		v_hat[i][nv-2] = ((Ae_v[i][nv-2]*v[i+1][nv-2])+(Aw_v[i][nv-2]*v[i-1][nv-2])+(As_v[i][nv-2]*v[i][nv-3])+(B_v[i][nv-2]))/Ap_v[i][nv-2];
 	}
-	// Fronteira Sul
+	// South boundary
 	for(int i=1;i<(nv-1);i++)
 	{
 		v_hat[i][0] = ((Ae_v[i][0]*v[i+1][0])+(Aw_v[i][0]*v[i-1][0])+(An_v[i][0]*v[i][1])+(B_v[i][0]))/Ap_v[i][0];
 	}
-	// Volumes Centrais
+	// Core volumes
 	for(int i=1;i<(nv-1);i++)
 	{
 		for(int j=1;j<(nv-2);j++)
@@ -853,7 +842,7 @@ void Calc_v_hat()
 
 void Calc_Coef_Pressao()
 {
-	// Canto Superior Esquerdo
+	// Left-up corner
 	Ae_p[0][nv-1] = (rho*dy*dx*dy)/(dx*Ap_u[0][nv-1]);
 	An_p[0][nv-1] = 0.;
 	Aw_p[0][nv-1] = 0.;
@@ -861,7 +850,7 @@ void Calc_Coef_Pressao()
 	
 	Ap_p[0][nv-1] = Ae_p[0][nv-1]+As_p[0][nv-1];
 	B_p[0][nv-1] = -(rho*u_hat[0][nv-1]*dy)+(rho*v_hat[0][nv-2]*dx);
-	// Canto Superior Direito
+	// Right-up corner
 	Ae_p[nv-1][nv-1] = 0.;
 	An_p[nv-1][nv-1] = 0.;
 	Aw_p[nv-1][nv-1] = (rho*dx*dx*dy)/(dy*Ap_u[nv-2][nv-1]);
@@ -869,7 +858,7 @@ void Calc_Coef_Pressao()
 	
 	Ap_p[nv-1][nv-1] = Aw_p[nv-1][nv-1]+As_p[nv-1][nv-1];
 	B_p[nv-1][nv-1] = (rho*u_hat[nv-2][nv-1]*dy)+(rho*v_hat[nv-1][nv-2]*dx);
-	// Canto Inferior Esquerdo
+	// Left-bottom corner
 	Ae_p[0][0] = (rho*dy*dx*dy)/(dx*Ap_u[0][0]);
 	An_p[0][0] = (rho*dx*dx*dy)/(dy*Ap_v[0][0]);
 	Aw_p[0][0] = 0.;
@@ -877,7 +866,7 @@ void Calc_Coef_Pressao()
 			
 	Ap_p[0][0] = Ae_p[0][0]+An_p[0][0];
 	B_p[0][0] = -(rho*u_hat[0][0]*dy)-(rho*v_hat[0][0]*dy);
-	// Canto Inferior Direito
+	// Right-bottom corner
 	Ae_p[nv-1][0] = 0.;
 	An_p[nv-1][0] = (rho*dx*dx*dy)/(dy*Ap_v[nv-1][0]);
 	Aw_p[nv-1][0] = (rho*dx*dx*dy)/(dy*Ap_u[nv-2][0]);
@@ -885,7 +874,7 @@ void Calc_Coef_Pressao()
 		
 	Ap_p[nv-1][0] = Aw_p[nv-1][0]+An_p[nv-1][0];
 	B_p[nv-1][0] = (rho*u_hat[nv-2][0]*dy)-(rho*v_hat[nv-1][0]*dy);
-	//Fronteira Leste
+	// East boundary
 	for(int j=1;j<(nv-1);j++)
 	{
 		Ae_p[nv-1][j] = 0.;
@@ -896,7 +885,7 @@ void Calc_Coef_Pressao()
 		Ap_p[nv-1][j] = Aw_p[nv-1][j]+An_p[nv-1][j]+As_p[nv-1][j];
 		B_p[nv-1][j] = (rho*u_hat[nv-2][j]*dy)+(rho*v_hat[nv-1][j-1]*dx)-(rho*v_hat[nv-1][j]*dy);
 	}
-	//Fronteira Oeste
+	// West boundary
 	for(int j=1;j<(nv-1);j++)
 	{
 		Ae_p[0][j] = (rho*dy*dx*dy)/(dx*Ap_u[0][j]);
@@ -907,7 +896,7 @@ void Calc_Coef_Pressao()
 		Ap_p[0][j] = Ae_p[0][j]+An_p[0][j]+As_p[0][j];
 		B_p[0][j] = -(rho*u_hat[0][j]*dy)+(rho*v_hat[0][j-1]*dx)-(rho*v_hat[0][j]*dx);
 	}
-	//Fronteira Norte
+	// North boundary
 	for(int i=1;i<(nv-1);i++)
 	{
 		Ae_p[i][nv-1] = (rho*dy*dx*dy)/(dx*Ap_u[i][nv-1]);
@@ -918,7 +907,7 @@ void Calc_Coef_Pressao()
 		Ap_p[i][nv-1] = Ae_p[i][nv-1]+Aw_p[i][nv-1]+As_p[i][nv-1];
 		B_p[i][nv-1] = (rho*u_hat[i-1][nv-1]*dy)-(rho*u_hat[i][nv-1]*dy)+(rho*v_hat[i][nv-2]*dx);
 	}
-	//Fronteira Sul
+	// South boundary
 	for(int i=1;i<(nv-1);i++)
 	{
 		Ae_p[i][0] = (rho*dy*dx*dy)/(dx*Ap_u[i][0]);
@@ -929,7 +918,7 @@ void Calc_Coef_Pressao()
 		Ap_p[i][0] = Ae_p[i][0]+Aw_p[i][0]+An_p[i][0];
 		B_p[i][0] = (rho*u_hat[i-1][0]*dy)-(rho*u_hat[i][0]*dy)-(rho*v_hat[i][0]*dy);
 	}
-	//volumes Centrais
+	// Core volumes
 	for(int i=1;i<(nv-1);i++)
 	{
 		for(int j=1;j<(nv-1);j++)
@@ -947,7 +936,7 @@ void Calc_Coef_Pressao()
 
 void Correcao_u_v()
 {
-	//Corrigindo Velocidade u
+	// Correct x-velocity u
 	for(int i=0;i<(nv-1);i++)
 	{
 		for(int j=0;j<nv;j++)
@@ -956,7 +945,7 @@ void Correcao_u_v()
 			u[i][j]    = u_hat[i][j] - ((Pn[i+1][j]-Pn[i][j])*dx*dy)/(Ap_u[i][j]*dx);
 		}
 	}
-	//Corrigindo Velocidade v
+	// Correct y-velocity v
 	for(int i=0;i<nv;i++)
 	{
 		for(int j=0;j<(nv-1);j++)
@@ -994,7 +983,7 @@ double Erro_v()
 	return erro;	
 }
 
-void Destroy()  //Limpando Mem�ria
+void Destroy()  // Clean memory
 {
 	delete [] u;
 	delete [] v;
@@ -1080,7 +1069,7 @@ void GravaArquivo()
 	  fout << endl;
 	  fout << endl;
 	  
-	  // Velocidade U
+	  // x-velocity U
 	  k=0;
           for(int j=0; j < (nv); j++ )
 	  {
@@ -1098,7 +1087,7 @@ void GravaArquivo()
 	  fout << endl;
 	  fout << endl;
 	  
-	  // Velocidade V
+	  // y-velocity V
 	  k=0;
           for(int j=0; j < (nv-1); j++ )
 	  {
@@ -1118,7 +1107,7 @@ void GravaArquivo()
 	  fout << endl;
 	  fout << endl;
 
-	  // PRESS�O
+	  // Pressure
 	  k=0;
           for(int j=0; j < (nv); j++ )
 	  {
@@ -1132,7 +1121,7 @@ void GravaArquivo()
 	  fout << endl;
 	  fout << endl;
 
-	  //Elementos
+	  // Cells (Control Volumes)
 	  for(int i=1; i < (nv+1); i++ )
 	  {
 		 fout << i+(nv+1) << "\t" << i+(nv+2) << "\t" << i+1 << "\t" << i << endl;
@@ -1152,13 +1141,13 @@ void GravaArquivo()
 int main()
 {
 	
-	read_in(); // Lendo Dados de Entrada
+	read_in(); 
 	
-	// Calculando Delta X e Delta Y
+	// Calculate Delta X e Delta Y
 	dx = L/nv; 
 	dy = H/nv;
 	
-	Alocate(); // Alocando Vari�veis na Mem�ria
+	Alocate(); 
 	int IT = 0;
 	int TESTE =0;
 	double eu = 0.;
@@ -1180,7 +1169,7 @@ int main()
 		cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 		if((IT % 500) == 0)
 		{
-			cout << endl << "......Gravando Solu��o Parcial....." << endl;
+			cout << endl << "......Gravando Solução Parcial....." << endl;
 			GravaArquivo();
 		}
 		if( ((Erro_u() < (0.0001)) and ( Erro_v() < (0.0001) )) or (IT == 100000) )
@@ -1203,6 +1192,6 @@ int main()
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 	GravaArquivo();
 
-	Destroy(); // Deletando Vari�veis da Mem�ria
+	Destroy();
 }
 
