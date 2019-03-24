@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "solver.hpp"
+#include "Cavity.hpp"
 
 using namespace std;
 
@@ -52,18 +53,18 @@ double U;	// velocity at north boundary
 double mi;	// viscosity
 
 // Control Volume Boundaries interpolation
-struct fronteiras{
+struct CVBoundaries{
 	double e;
 	double w;
 	double n;
 	double s;
 };
-fronteiras **Re_x;
-fronteiras **alpha_x;
-fronteiras **beta_x;
-fronteiras **Re_y;
-fronteiras **alpha_y;
-fronteiras **beta_y;
+CVBoundaries **Re_x;
+CVBoundaries **alpha_x;
+CVBoundaries **beta_x;
+CVBoundaries **Re_y;
+CVBoundaries **alpha_y;
+CVBoundaries **beta_y;
 
 // Delta X e Delta Y
 double dx = 0.;
@@ -196,14 +197,14 @@ void Alocate() // Alocate e initialize arrays (matrices)
 	// Control volumes boundaries data
 	
 	// x-dir - mesh for u
-	Re_x     = new fronteiras *[nv-1];
-	alpha_x  = new fronteiras *[nv-1];
-	beta_x   = new fronteiras *[nv-1];
+	Re_x     = new CVBoundaries *[nv-1];
+	alpha_x  = new CVBoundaries *[nv-1];
+	beta_x   = new CVBoundaries *[nv-1];
 	for(int i=0;i<(nv-1);i++)
 	{
-		Re_x[i]     = new fronteiras [nv];
-		alpha_x[i]  = new fronteiras [nv];
-		beta_x[i]   = new fronteiras [nv];
+		Re_x[i]     = new CVBoundaries [nv];
+		alpha_x[i]  = new CVBoundaries [nv];
+		beta_x[i]   = new CVBoundaries [nv];
 	}
 	for(int i=0;i<(nv-1);i++)
 	{
@@ -224,14 +225,14 @@ void Alocate() // Alocate e initialize arrays (matrices)
 		}
 	}
 	// y-dir - mesh for v
-	Re_y     = new fronteiras *[nv];
-	alpha_y  = new fronteiras *[nv];
-	beta_y   = new fronteiras *[nv];
+	Re_y     = new CVBoundaries *[nv];
+	alpha_y  = new CVBoundaries *[nv];
+	beta_y   = new CVBoundaries *[nv];
 	for(int i=0;i<nv;i++)
 	{
-		Re_y[i]     = new fronteiras [nv-1];
-		alpha_y[i]  = new fronteiras [nv-1];
-		beta_y[i]   = new fronteiras [nv-1];
+		Re_y[i]     = new CVBoundaries [nv-1];
+		alpha_y[i]  = new CVBoundaries [nv-1];
+		beta_y[i]   = new CVBoundaries [nv-1];
 	}
 	for(int i=0;i<nv;i++)
 	{
@@ -1142,7 +1143,7 @@ int main()
 {
 	
 	read_in(); 
-	
+
 	// Calculate Delta X e Delta Y
 	dx = L/nv; 
 	dy = H/nv;
