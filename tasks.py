@@ -43,12 +43,14 @@ def build(ctx, cclean=False):
 	"""
 	Build C++ code.
 	"""
+	project_name, project_pwd = get_project_name_and_folder()
+
 	if cclean:
 		clean(ctx)
 	
-	project_name, project_pwd = get_project_name_and_folder()
-	
-	print("Building!")
+	build_folder = project_pwd + '/build' 
+	build_folder_exists = os.path.isdir(build_folder) and os.path.exists(build_folder)
+
 	commands = [
 		'cd ' + project_pwd,
 		'mkdir build',
@@ -58,6 +60,11 @@ def build(ctx, cclean=False):
 		'cmake ../..',
 		'cmake --build .',
 	]
+	if build_folder_exists:
+		commands.remove('mkdir build')
+		commands.remove('mkdir makefiles')
+
+	print("Building!")
 	ctx.run(' && '.join(commands))
 
 
