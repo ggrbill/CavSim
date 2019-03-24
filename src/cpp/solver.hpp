@@ -1,4 +1,5 @@
-
+#ifndef CAVITY_SOLVER_H
+#define CAVITY_SOLVER_H
 
 /*!
     SOR(Successive Over Relaxation) Solver for Structured grid.
@@ -10,3 +11,5 @@ void SOR_structured(
     int const MAX_IT, float const w, // relaxation factor
     double const tol = 0.0001// convergence tolerance
 );
+
+#endif
