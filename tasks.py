@@ -1,6 +1,16 @@
 from invoke import task 
 import os
 
+class colors:
+	BLUE = '\033[1;34;40m'
+	GREEN =  '\033[32m'
+	YELLOW =  '\033[33m'
+	WHITE = '\033[37m'
+	RESET = '\033[0;0m'
+
+def print_(color, msg):
+	print(color + msg + colors.RESET)
+
 def get_project_name_and_folder():
     """
     :return: The Name and Root Directory of the current project from the current working dir.
@@ -26,12 +36,14 @@ def clean(ctx):
 	project_name, project_pwd = get_project_name_and_folder()
 	ctx.run('cd ' + project_pwd)
 
-	print("Cleaning!")
+	print_(colors.GREEN, ">>> Cleaning! <<<")
 	commands = [
 		'cd ' + project_pwd,
 		'rm -Rf build',
+		'rm -Rf artifacts',
 	]
 	ctx.run(' && '.join(commands))
+	print_(colors.GREEN, ">>> build and artifact folders deleted. <<<")
 
 
 @task(
@@ -41,7 +53,7 @@ def clean(ctx):
 )
 def build(ctx, cclean=False):
 	"""
-	Build C++ code.
+	Build C++ code and install the artifacts.
 	"""
 	project_name, project_pwd = get_project_name_and_folder()
 
@@ -59,13 +71,15 @@ def build(ctx, cclean=False):
 		'cd makefiles',
 		'cmake ../..',
 		'cmake --build .',
+		'make install',
 	]
 	if build_folder_exists:
 		commands.remove('mkdir build')
 		commands.remove('mkdir makefiles')
 
-	print("Building!")
+	print_(colors.BLUE, ">>> Building And Installing! <<<" )
 	ctx.run(' && '.join(commands))
+	print_(colors.BLUE, ">>> Builded and installed. <<<")
 
 
 @task()
@@ -75,12 +89,14 @@ def run_case_ex(ctx):
 	"""
 	project_name, project_pwd = get_project_name_and_folder()
 	orig_folder = project_pwd + '/src/cpp/inCav.txt '
-	dest_folder = project_pwd + '/build/makefiles/bin '
+	dest_folder = project_pwd + '/artifacts/'
 
 	commands = [
 		'cp ' + orig_folder + dest_folder,
 		'cd ' + dest_folder,
 		'./' + project_name + ' inCav.txt',
 	]
+	print_(colors.YELLOW, '>>> Running! <<<')
 	print(commands)
 	ctx.run(' && '.join(commands))
+	print_(colors.YELLOW, '>>> Finished! <<<')
