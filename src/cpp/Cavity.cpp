@@ -1,6 +1,6 @@
 #include "Cavity.hpp"
 
-Cavity::Cavity(
+CavitySetup::CavitySetup(
     double length, 
     double height, 
     int n_x, 
@@ -18,4 +18,8 @@ Cavity::Cavity(
 , U(U_lid) 
 , dx((double)L/n_x)
 , dy((double)L/n_y)
+{}
+
+Cavity::Cavity(std::shared_ptr<CavitySetup> setup)
+: setup(setup)
 {}
