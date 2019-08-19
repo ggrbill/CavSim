@@ -12,7 +12,7 @@ public:
         int n_x, 
         int n_y,  
         double rho,   // Density 
-        double mi,    // Viscosity
+        double mu,    // Viscosity
         double U_lid  // Upper lid velocity
     );
     ~CavitySetup() {}

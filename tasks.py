@@ -94,7 +94,7 @@ def run_case_ex(ctx):
 	commands = [
 		'cp ' + orig_folder + dest_folder,
 		'cd ' + dest_folder,
-		'./' + project_name + ' inCav.txt',
+		'./' + project_name + 'Old inCav.txt',
 	]
 	print_(colors.YELLOW, '>>> Running! <<<')
 	print(commands)

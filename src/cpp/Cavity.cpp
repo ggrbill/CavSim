@@ -17,7 +17,7 @@ CavitySetup::CavitySetup(
 , mu(mu)
 , U(U_lid) 
 , dx((double)L/n_x)
-, dy((double)L/n_y)
+, dy((double)H/n_y)
 {}
 
 Cavity::Cavity(std::shared_ptr<CavitySetup> setup)

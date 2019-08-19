@@ -13,3 +13,4 @@ set(CMAKE_CXX COMPILER "g++")
 project(CavSim VERSION 0.1.0 LANGUAGES CXX C)
 
 add_subdirectory (src/cpp)
+add_subdirectory (src/bindings)
