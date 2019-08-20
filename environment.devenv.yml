@@ -1,0 +1,13 @@
+name: CavSim
+channels:
+- defaults
+- conda-forge
+dependencies:
+- python=3.6.1=2
+- invoke>0.22.1
+- cmake>=3.9
+- pybind11=2.2.4
+environment:
+  PYTHONPATH:
+    - {{root}}/src/python
+    - {{root}}/artifacts
