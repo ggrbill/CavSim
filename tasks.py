@@ -15,7 +15,7 @@ def get_project_name_and_folder():
     """
     :return: The Name and Root Directory of the current project from the current working dir.
     """
-    filename = 'environment.yml'
+    filename = 'environment.devenv.yml'
     directory = os.path.abspath(os.curdir)
     while True:
         if os.path.exists(os.path.join(directory, filename)):
