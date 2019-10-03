@@ -8,7 +8,7 @@ class colors:
 	WHITE = '\033[37m'
 	RESET = '\033[0;0m'
 
-def print_(color, msg):
+def print_color(color, msg):
 	print(color + msg + colors.RESET)
 
 def get_project_name_and_folder():
@@ -36,14 +36,14 @@ def clean(ctx):
 	project_name, project_pwd = get_project_name_and_folder()
 	ctx.run('cd ' + project_pwd)
 
-	print_(colors.GREEN, ">>> Cleaning! <<<")
+	print_color(colors.GREEN, ">>> Cleaning! <<<")
 	commands = [
 		'cd ' + project_pwd,
 		'rm -Rf build',
 		'rm -Rf artifacts',
 	]
 	ctx.run(' && '.join(commands))
-	print_(colors.GREEN, ">>> build and artifact folders deleted. <<<")
+	print_color(colors.GREEN, ">>> build and artifact folders deleted. <<<")
 
 
 @task(
@@ -63,7 +63,7 @@ def build(ctx, cclean=False):
 	build_folder = project_pwd + '/build' 
 	build_folder_exists = os.path.isdir(build_folder) and os.path.exists(build_folder)
 
-	commands = [
+	build_commands = [
 		'cd ' + project_pwd,
 		'mkdir build',
 		'cd build',
@@ -71,19 +71,32 @@ def build(ctx, cclean=False):
 		'cd makefiles',
 		'cmake ../..',
 		'cmake --build .',
-		'make install',
 	]
 	if build_folder_exists:
-		commands.remove('mkdir build')
-		commands.remove('mkdir makefiles')
+		build_commands.remove('mkdir build')
+		build_commands.remove('mkdir makefiles')
 
-	print_(colors.BLUE, ">>> Building And Installing! <<<" )
-	ctx.run(' && '.join(commands))
-	print_(colors.BLUE, ">>> Builded and installed. <<<")
+	print_color(colors.BLUE, ">>> Building! <<<" )
+	ctx.run(' && '.join(build_commands))
+
+	install_commands = [
+		'cd ' + project_pwd,
+		'cd build',
+		'cd makefiles',
+		'make install',
+	]
+	print_color(colors.BLUE, ">>> Installing! <<<" )
+	ctx.run(' && '.join(install_commands))
+
+	print_color(colors.BLUE, ">>> Builded and installed. <<<")
 
 
-@task()
-def run_case_ex(ctx):
+@task(
+	help = {
+		'verbose': "Print commands before execute them."
+	}
+)
+def run_case_ex(ctx, verbose=False):
 	"""
 	Run an example case.
 	"""
@@ -91,12 +104,19 @@ def run_case_ex(ctx):
 	orig_folder = project_pwd + '/src/cpp/inCav.txt '
 	dest_folder = project_pwd + '/artifacts/'
 
+	dest_folder_exists = os.path.isdir(dest_folder) and os.path.exists(dest_folder)
+	if not dest_folder_exists:
+		build(ctx)
+	
 	commands = [
 		'cp ' + orig_folder + dest_folder,
 		'cd ' + dest_folder,
 		'./' + project_name + 'Old inCav.txt',
 	]
-	print_(colors.YELLOW, '>>> Running! <<<')
-	print(commands)
+
+	if verbose:
+		print(commands)
+
+	print_color(colors.YELLOW, '>>> Running! <<<')
 	ctx.run(' && '.join(commands))
-	print_(colors.YELLOW, '>>> Finished! <<<')
+	print_color(colors.YELLOW, '>>> Finished! <<<')
