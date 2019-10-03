@@ -31,7 +31,7 @@ def get_project_name_and_folder():
 @task()
 def clean(ctx):
 	"""
-	Delete 'build' folder.
+	Delete 'build' and 'artifacts' folders.
 	"""
 	project_name, project_pwd = get_project_name_and_folder()
 	ctx.run('cd ' + project_pwd)
@@ -48,7 +48,7 @@ def clean(ctx):
 
 @task(
 	help = {
-		'cclean': "Call 'clean' task (Delete 'build' folder) before build again."
+		'cclean': "Call 'clean' task (Delete 'build' and 'artifacts' folders) before build again."
 	}
 )
 def build(ctx, cclean=False):
