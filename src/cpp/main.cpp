@@ -44,13 +44,6 @@ double **An_p;
 double **As_p;
 double **B_p;
 
-// Input data
-double L;	// Length 
-double H;	// Height
-int    nv;	// Number of rows and columns
-double rho;	// density
-double U;	// velocity at north boundary
-double mi;	// viscosity
 
 // Control Volume Boundaries interpolation
 struct CVBoundaries{
@@ -70,19 +63,37 @@ CVBoundaries **beta_y;
 double dx = 0.;
 double dy = 0.;
 
-void read_in() // Read input data
+std::shared_ptr<CavitySetup> read_in(std::string filename) // Read input data
 {
-	fstream fin("./inCav.txt");
-	fin >>  L;
-	fin >>  H;
-	fin >>  nv;
-	fin >>  rho;
-	fin >>  U; 
-	fin >>  mi;
+	double Length; 
+	double Height;
+	int    n_rc; // Number of rows and columns
+	double density;
+	double vel_top_bound;
+	double viscosity;
+
+	fstream fin(filename);
+	fin >>  Length;
+	fin >>  Height;
+	fin >>  n_rc;
+	fin >>  density;
+	fin >>  vel_top_bound; 
+	fin >>  viscosity;
 	fin.close();
+
+	return std::make_shared<CavitySetup>(
+		Length, 
+		Height, 
+		n_rc, 
+		n_rc, 
+		density, 
+		viscosity,
+		vel_top_bound
+	);
 }
 
-void Alocate() // Alocate e initialize arrays (matrices)
+
+void Alocate(int nv) // Alocate e initialize arrays (matrices)
 {
 	// Alocating
 
@@ -254,6 +265,14 @@ void Alocate() // Alocate e initialize arrays (matrices)
 	}
 	
 }
+
+// Input data
+double L;	// Length 
+double H;	// Height
+int    nv;	// Number of rows and columns
+double rho;	// density
+double U;	// velocity at north boundary
+double mi;	// viscosity
 
 void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 {
@@ -1152,14 +1171,21 @@ void GravaArquivo()
 
 int main()
 {
-	
-	read_in(); 
+	std::shared_ptr<CavitySetup> cav_setup;
+	cav_setup = read_in("./inCav.txt"); 
 
-	// Calculate Delta X e Delta Y
-	dx = L/nv; 
-	dy = H/nv;
+	L = cav_setup->L;	 
+	H = cav_setup->H;	
+	nv = cav_setup->n_x;	
+	rho = cav_setup->rho;	
+	U = cav_setup->U;	
+	mi = cav_setup->mu;	
 	
-	Alocate(); 
+	// Calculate Delta X e Delta Y
+	dx = cav_setup->dx; 
+	dy = cav_setup->dy;
+
+	Alocate(cav_setup->n_x); 
 	int IT = 0;
 	int TESTE =0;
 	double eu = 0.;
