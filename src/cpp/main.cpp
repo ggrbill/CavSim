@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "solver.hpp"
+#include "IO.hpp"
 #include "Cavity.hpp"
 
 using namespace std;
@@ -62,36 +63,6 @@ CVBoundaries **beta_y;
 // Delta X e Delta Y
 double dx = 0.;
 double dy = 0.;
-
-std::shared_ptr<CavitySetup> read_in(std::string filename) // Read input data
-{
-	double Length; 
-	double Height;
-	int    n_rc; // Number of rows and columns
-	double density;
-	double vel_top_bound;
-	double viscosity;
-
-	fstream fin(filename);
-	fin >>  Length;
-	fin >>  Height;
-	fin >>  n_rc;
-	fin >>  density;
-	fin >>  vel_top_bound; 
-	fin >>  viscosity;
-	fin.close();
-
-	return std::make_shared<CavitySetup>(
-		Length, 
-		Height, 
-		n_rc, 
-		n_rc, 
-		density, 
-		viscosity,
-		vel_top_bound
-	);
-}
-
 
 void Alocate(int nv) // Alocate e initialize arrays (matrices)
 {
@@ -1041,12 +1012,12 @@ void Destroy()  // Clean memory
 	delete [] beta_y;
 }
 
-void GravaArquivo()
+void save_results(std::string filename)
 {
 	
 	ofstream fout;
 	fout << std::scientific;
-	fout.open("outCav.txt");
+	fout.open(filename);
 	fout << "TITLE = \"OutCav\" " << endl;
 	fout << "VARIABLES = \"X\", \"Y\", \"U\", \"V\", \"P\" " << endl;
 	fout <<"ZONE T=\"" << "OUTCAV" << "\", N=" << (nv+1)*(nv+1) << ", E=" << nv*nv  <<  
@@ -1171,8 +1142,11 @@ void GravaArquivo()
 
 int main()
 {
+	std:: string filename_input = "./inCav.txt";
+	std:: string filename_results = "./outCav.txt";
+	
 	std::shared_ptr<CavitySetup> cav_setup;
-	cav_setup = read_in("./inCav.txt"); 
+	cav_setup = read_input_data(filename_input);
 
 	L = cav_setup->L;	 
 	H = cav_setup->H;	
@@ -1207,8 +1181,8 @@ int main()
 		cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 		if((IT % 500) == 0)
 		{
-			cout << endl << "......Gravando Solução Parcial....." << endl;
-			GravaArquivo();
+			cout << endl << "......Saving Partial Solution....." << endl;
+			save_results(filename_results);
 		}
 		if( ((Erro_u() < (0.0001)) and ( Erro_v() < (0.0001) )) or (IT == 100000) )
 		{
@@ -1228,7 +1202,7 @@ int main()
 		);	
 	Correcao_u_v();
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
-	GravaArquivo();
+	save_results(filename_results);
 
 	Destroy();
 }
