@@ -60,10 +60,6 @@ CVBoundaries **Re_y;
 CVBoundaries **alpha_y;
 CVBoundaries **beta_y;
 
-// Delta X e Delta Y
-double dx = 0.;
-double dy = 0.;
-
 void Alocate(int nv) // Alocate e initialize arrays (matrices)
 {
 	// Alocating
@@ -244,6 +240,10 @@ int    nv;	// Number of rows and columns
 double rho;	// density
 double U;	// velocity at north boundary
 double mi;	// viscosity
+
+// Delta X e Delta Y
+double dx = 0.;
+double dy = 0.;
 
 void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 {
