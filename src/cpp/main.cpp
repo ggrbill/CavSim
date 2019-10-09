@@ -1012,134 +1012,6 @@ void Destroy()  // Clean memory
 	delete [] beta_y;
 }
 
-void save_results(std::string filename)
-{
-	
-	ofstream fout;
-	fout << std::scientific;
-	fout.open(filename);
-	fout << "TITLE = \"OutCav\" " << endl;
-	fout << "VARIABLES = \"X\", \"Y\", \"U\", \"V\", \"P\" " << endl;
-	fout <<"ZONE T=\"" << "OUTCAV" << "\", N=" << (nv+1)*(nv+1) << ", E=" << nv*nv  <<  
-  	",  DATAPACKING=BLOCK, ZONETYPE=FEQUADRILATERAL, VARLOCATION=([3-5]=CELLCENTERED), SOLUTIONTIME=" << "1" << endl;
-
-	// x coordinates
-	int k = 0;
-	for (int j = 1; j < (nv + 2); j++) {
-		fout << 0. << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-		for (int i = 1; i < (nv + 1); i++) {
-			fout << i * dx << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// y coordinates
-	k = 0;
-	for (int j = 1; j < (nv + 2); j++) {
-		fout << 0. << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-	}
-	for (int j = 1; j < (nv + 1); j++) {
-		for (int i = 1; i < (nv + 2); i++) {
-			fout << j * dy << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// x-velocity U
-	k = 0;
-	for (int j = 0; j < (nv); j++) {
-		for (int i = 0; i < (nv - 1); i++) {
-			fout << u[i][j] / U << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-		fout << "0." << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// y-velocity V
-	k = 0;
-	for (int j = 0; j < (nv - 1); j++) {
-		for (int i = 0; i < (nv); i++) {
-			fout << v[i][j] / U << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	for (int i = 0; i < (nv); i++) {
-		fout << "0." << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// Pressure
-	k = 0;
-	for (int j = 0; j < (nv); j++) {
-		for (int i = 0; i < (nv); i++) {
-			fout << Pn[i][j] << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// Cells (Control Volumes)
-	for (int i = 1; i < (nv + 1); i++) {
-		fout << i + (nv + 1) << "\t" << i + (nv + 2) << "\t" << i + 1 << "\t" << i << endl;
-	}
-	for (int j = 1; j < (nv); j++) {
-		for (int i = 1; i < (nv + 1); i++) {
-			fout << i + (j * (nv + 1)) + (nv + 1) << "\t" << i + (j * (nv + 1)) + (nv + 2) << "\t" << i + (j * (nv + 1)) + 1 << "\t" << i + (j * (nv + 1)) << endl;
-		}
-	}
-
-	fout << endl;
-	fout.close();
-} 
-
 int main()
 {
 	std:: string filename_input = "./inCav.txt";
@@ -1182,7 +1054,7 @@ int main()
 		if((IT % 500) == 0)
 		{
 			cout << endl << "......Saving Partial Solution....." << endl;
-			save_results(filename_results);
+			save_results(filename_results, cav_setup, u, v, Pn);
 		}
 		if( ((Erro_u() < (0.0001)) and ( Erro_v() < (0.0001) )) or (IT == 100000) )
 		{
@@ -1202,7 +1074,7 @@ int main()
 		);	
 	Correcao_u_v();
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
-	save_results(filename_results);
+	save_results(filename_results, cav_setup, u, v, Pn);
 
 	Destroy();
 }
