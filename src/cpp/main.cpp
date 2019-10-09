@@ -7,6 +7,7 @@
 #include <math.h>
 
 #include "solver.hpp"
+#include "IO.hpp"
 #include "Cavity.hpp"
 
 using namespace std;
@@ -44,13 +45,6 @@ double **An_p;
 double **As_p;
 double **B_p;
 
-// Input data
-double L;	// Length 
-double H;	// Height
-int    nv;	// Number of rows and columns
-double rho;	// density
-double U;	// velocity at north boundary
-double mi;	// viscosity
 
 // Control Volume Boundaries interpolation
 struct CVBoundaries{
@@ -70,19 +64,7 @@ CVBoundaries **beta_y;
 double dx = 0.;
 double dy = 0.;
 
-void read_in() // Read input data
-{
-	fstream fin("./inCav.txt");
-	fin >>  L;
-	fin >>  H;
-	fin >>  nv;
-	fin >>  rho;
-	fin >>  U; 
-	fin >>  mi;
-	fin.close();
-}
-
-void Alocate() // Alocate e initialize arrays (matrices)
+void Alocate(int nv) // Alocate e initialize arrays (matrices)
 {
 	// Alocating
 
@@ -254,6 +236,14 @@ void Alocate() // Alocate e initialize arrays (matrices)
 	}
 	
 }
+
+// Input data
+double L;	// Length 
+double H;	// Height
+int    nv;	// Number of rows and columns
+double rho;	// density
+double U;	// velocity at north boundary
+double mi;	// viscosity
 
 void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 {
@@ -1022,144 +1012,26 @@ void Destroy()  // Clean memory
 	delete [] beta_y;
 }
 
-void GravaArquivo()
-{
-	
-	ofstream fout;
-	fout << std::scientific;
-	fout.open("outCav.txt");
-	fout << "TITLE = \"OutCav\" " << endl;
-	fout << "VARIABLES = \"X\", \"Y\", \"U\", \"V\", \"P\" " << endl;
-	fout <<"ZONE T=\"" << "OUTCAV" << "\", N=" << (nv+1)*(nv+1) << ", E=" << nv*nv  <<  
-  	",  DATAPACKING=BLOCK, ZONETYPE=FEQUADRILATERAL, VARLOCATION=([3-5]=CELLCENTERED), SOLUTIONTIME=" << "1" << endl;
-
-	// x coordinates
-	int k = 0;
-	for (int j = 1; j < (nv + 2); j++) {
-		fout << 0. << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-		for (int i = 1; i < (nv + 1); i++) {
-			fout << i * dx << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// y coordinates
-	k = 0;
-	for (int j = 1; j < (nv + 2); j++) {
-		fout << 0. << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-	}
-	for (int j = 1; j < (nv + 1); j++) {
-		for (int i = 1; i < (nv + 2); i++) {
-			fout << j * dy << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// x-velocity U
-	k = 0;
-	for (int j = 0; j < (nv); j++) {
-		for (int i = 0; i < (nv - 1); i++) {
-			fout << u[i][j] / U << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-		fout << "0." << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// y-velocity V
-	k = 0;
-	for (int j = 0; j < (nv - 1); j++) {
-		for (int i = 0; i < (nv); i++) {
-			fout << v[i][j] / U << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	for (int i = 0; i < (nv); i++) {
-		fout << "0." << "  ";
-		k++;
-		if (k == 9) {
-			fout << endl;
-			k = 0;
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// Pressure
-	k = 0;
-	for (int j = 0; j < (nv); j++) {
-		for (int i = 0; i < (nv); i++) {
-			fout << Pn[i][j] << "  ";
-			k++;
-			if (k == 9) {
-				fout << endl;
-				k = 0;
-			}
-		}
-	}
-	fout << endl;
-	fout << endl;
-
-	// Cells (Control Volumes)
-	for (int i = 1; i < (nv + 1); i++) {
-		fout << i + (nv + 1) << "\t" << i + (nv + 2) << "\t" << i + 1 << "\t" << i << endl;
-	}
-	for (int j = 1; j < (nv); j++) {
-		for (int i = 1; i < (nv + 1); i++) {
-			fout << i + (j * (nv + 1)) + (nv + 1) << "\t" << i + (j * (nv + 1)) + (nv + 2) << "\t" << i + (j * (nv + 1)) + 1 << "\t" << i + (j * (nv + 1)) << endl;
-		}
-	}
-
-	fout << endl;
-	fout.close();
-} 
-
 int main()
 {
+	std:: string filename_input = "./inCav.txt";
+	std:: string filename_results = "./outCav.txt";
 	
-	read_in(); 
+	std::shared_ptr<CavitySetup> cav_setup;
+	cav_setup = read_input_data(filename_input);
 
-	// Calculate Delta X e Delta Y
-	dx = L/nv; 
-	dy = H/nv;
+	L = cav_setup->L;	 
+	H = cav_setup->H;	
+	nv = cav_setup->n_x;	
+	rho = cav_setup->rho;	
+	U = cav_setup->U;	
+	mi = cav_setup->mu;	
 	
-	Alocate(); 
+	// Calculate Delta X e Delta Y
+	dx = cav_setup->dx; 
+	dy = cav_setup->dy;
+
+	Alocate(cav_setup->n_x); 
 	int IT = 0;
 	int TESTE =0;
 	double eu = 0.;
@@ -1181,8 +1053,8 @@ int main()
 		cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 		if((IT % 500) == 0)
 		{
-			cout << endl << "......Gravando Solução Parcial....." << endl;
-			GravaArquivo();
+			cout << endl << "......Saving Partial Solution....." << endl;
+			save_results(filename_results, cav_setup, u, v, Pn);
 		}
 		if( ((Erro_u() < (0.0001)) and ( Erro_v() < (0.0001) )) or (IT == 100000) )
 		{
@@ -1202,7 +1074,7 @@ int main()
 		);	
 	Correcao_u_v();
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
-	GravaArquivo();
+	save_results(filename_results, cav_setup, u, v, Pn);
 
 	Destroy();
 }

@@ -5,7 +5,9 @@ add_library(${PROJECT_NAME}
             Cavity.cpp
             Cavity.hpp
             solver.cpp
-            solver.hpp)
+            solver.hpp
+            IO.cpp
+            IO.hpp)
 
 add_executable (${PROJECT_NAME}Old main.cpp)
 
