@@ -8,6 +8,8 @@
 
 #include "solver.hpp"
 #include "IO.hpp"
+#include "Legacy/Structures.hpp"
+
 #include "Cavity.hpp"
 
 using namespace std;
@@ -45,193 +47,12 @@ double **An_p;
 double **As_p;
 double **B_p;
 
-
-// Control Volume Boundaries interpolation
-struct CVBoundaries{
-	double e;
-	double w;
-	double n;
-	double s;
-};
 CVBoundaries **Re_x;
 CVBoundaries **alpha_x;
 CVBoundaries **beta_x;
 CVBoundaries **Re_y;
 CVBoundaries **alpha_y;
 CVBoundaries **beta_y;
-
-void Alocate(int nv) // Alocate e initialize arrays (matrices)
-{
-	// Alocating
-
-	// u - x-velocity
-	u     = new double *[nv-1];
-	uOLD  = new double *[nv-1];
-	u_hat = new double *[nv-1];
-	Ap_u  = new double *[nv-1];
-	Aw_u  = new double *[nv-1];
-	Ae_u  = new double *[nv-1];
-	An_u  = new double *[nv-1];
-	As_u  = new double *[nv-1];
-	B_u   = new double *[nv-1];
-	for(int i=0;i<(nv-1);i++)
-	{
-		u[i]    = new double [nv];
-		uOLD[i] = new double [nv];
-		u_hat[i]= new double [nv];
-		Ap_u[i] = new double [nv];
-		Aw_u[i] = new double [nv];
-		Ae_u[i] = new double [nv];
-		An_u[i] = new double [nv];
-		As_u[i] = new double [nv];
-		B_u[i]  = new double [nv];
-	}
-	for(int i=0;i<(nv-1);i++)
-	{
-		for(int j=0;j<nv;j++)
-		{
-			u[i][j]    = 0.;
-			uOLD[i][j] = 0.;
-			u_hat[i][j]= 0.;
-			Ap_u[i][j] = 0.;
-			Aw_u[i][j] = 0.;
-			Ae_u[i][j] = 0.;
-			An_u[i][j] = 0.;
-			As_u[i][j] = 0.;
-			B_u[i][j]  = 0.;
-		}
-	}
-	// v - y-velocity
-	v     = new double *[nv];
-	vOLD  = new double *[nv];
-	v_hat = new double *[nv];
-	Ap_v  = new double *[nv];
-	Aw_v  = new double *[nv];
-	Ae_v  = new double *[nv];
-	An_v  = new double *[nv];
-	As_v  = new double *[nv];
-	B_v   = new double *[nv];
-	for(int i=0;i<nv;i++)
-	{
-		v[i]    = new double [nv-1];
-		vOLD[i] = new double [nv-1];
-		v_hat[i]= new double [nv-1];
-		Ap_v[i] = new double [nv-1];
-		Aw_v[i] = new double [nv-1];
-		Ae_v[i] = new double [nv-1];
-		An_v[i] = new double [nv-1];
-		As_v[i] = new double [nv-1];
-		B_v[i]  = new double [nv-1];
-	}
-	for(int i=0;i<nv;i++)
-	{
-		for(int j=0;j<(nv-1);j++)
-		{
-			v[i][j]    = 0.;
-			vOLD[i][j] = 0.;
-			v_hat[i][j]= 0.;
-			Ap_v[i][j] = 0.;
-			Aw_v[i][j] = 0.;
-			Ae_v[i][j] = 0.;
-			An_v[i][j] = 0.;
-			As_v[i][j] = 0.;
-			B_v[i][j]  = 0.;
-		}
-	}
-	// Pressure
-	P     = new double *[nv];
-	Pn    = new double *[nv];
-	Ap_p  = new double *[nv];
-	Aw_p  = new double *[nv];
-	Ae_p  = new double *[nv];
-	An_p  = new double *[nv];
-	As_p  = new double *[nv];
-	B_p   = new double *[nv];
-	for(int i=0;i<nv;i++)
-	{
-		P[i]    = new double [nv];
-		Pn[i]   = new double [nv];
-		Ap_p[i] = new double [nv];
-		Aw_p[i] = new double [nv];
-		Ae_p[i] = new double [nv];
-		An_p[i] = new double [nv];
-		As_p[i] = new double [nv];
-		B_p[i]  = new double [nv];
-	}
-	for(int i=0;i<nv;i++)
-	{
-		for(int j=0;j<nv;j++)
-		{
-			P[i][j]    = 0.;
-			Pn[i][j]   = 0.;
-			Ap_p[i][j] = 0.;
-			Aw_p[i][j] = 0.;
-			Ae_p[i][j] = 0.;
-			An_p[i][j] = 0.;
-			As_p[i][j] = 0.;
-			B_p[i][j] = 0.;
-		}
-	}
-	// Control volumes boundaries data
-	
-	// x-dir - mesh for u
-	Re_x     = new CVBoundaries *[nv-1];
-	alpha_x  = new CVBoundaries *[nv-1];
-	beta_x   = new CVBoundaries *[nv-1];
-	for(int i=0;i<(nv-1);i++)
-	{
-		Re_x[i]     = new CVBoundaries [nv];
-		alpha_x[i]  = new CVBoundaries [nv];
-		beta_x[i]   = new CVBoundaries [nv];
-	}
-	for(int i=0;i<(nv-1);i++)
-	{
-		for(int j=0;j<nv;j++)
-		{
-			Re_x[i][j].e     = 0.;
-			Re_x[i][j].w     = 0.;
-			Re_x[i][j].n     = 0.;
-			Re_x[i][j].s     = 0.;
-			alpha_x[i][j].e  = 0.;
-			alpha_x[i][j].w  = 0.;
-			alpha_x[i][j].n  = 0.;
-			alpha_x[i][j].s  = 0.;
-			beta_x[i][j].e   = 0.;
-			beta_x[i][j].w   = 0.;
-			beta_x[i][j].n   = 0.;
-			beta_x[i][j].s   = 0.;
-		}
-	}
-	// y-dir - mesh for v
-	Re_y     = new CVBoundaries *[nv];
-	alpha_y  = new CVBoundaries *[nv];
-	beta_y   = new CVBoundaries *[nv];
-	for(int i=0;i<nv;i++)
-	{
-		Re_y[i]     = new CVBoundaries [nv-1];
-		alpha_y[i]  = new CVBoundaries [nv-1];
-		beta_y[i]   = new CVBoundaries [nv-1];
-	}
-	for(int i=0;i<nv;i++)
-	{
-		for(int j=0;j<(nv-1);j++)
-		{
-			Re_y[i][j].e     = 0.;
-			Re_y[i][j].w     = 0.;
-			Re_y[i][j].n     = 0.;
-			Re_y[i][j].s     = 0.;
-			alpha_y[i][j].e  = 0.;
-			alpha_y[i][j].w  = 0.;
-			alpha_y[i][j].n  = 0.;
-			alpha_y[i][j].s  = 0.;
-			beta_y[i][j].e   = 0.;
-			beta_y[i][j].w   = 0.;
-			beta_y[i][j].n   = 0.;
-			beta_y[i][j].s   = 0.;
-		}
-	}
-	
-}
 
 // Input data
 double L;	// Length 
@@ -974,44 +795,6 @@ double Erro_v()
 	return erro;	
 }
 
-void Destroy()  // Clean memory
-{
-	delete [] u;
-	delete [] v;
-	delete [] u_hat;
-	delete [] v_hat;
-	delete [] P;
-
-	delete [] Ap_u;
-   	delete [] Aw_u;
-	delete [] Ae_u;
-	delete [] An_u;
-	delete [] As_u;
-	delete [] B_u;
-
-	delete [] Ap_v;
-   	delete [] Aw_v;
-	delete [] Ae_v;
-	delete [] An_v;
-	delete [] As_v;
-	delete [] B_v;
-	
-	delete [] Ap_p;
-   	delete [] Aw_p;
-	delete [] Ae_p;
-	delete [] An_p;
-	delete [] As_p;
-	delete [] B_p;
-
-	delete [] Re_x;
-	delete [] alpha_x;
-	delete [] beta_x;
-
-	delete [] Re_y;
-	delete [] alpha_y;
-	delete [] beta_y;
-}
-
 int main()
 {
 	std:: string filename_input = "./inCav.txt";
@@ -1031,7 +814,43 @@ int main()
 	dx = cav_setup->dx; 
 	dy = cav_setup->dy;
 
-	Alocate(cav_setup->n_x); 
+	allocate_vector_2d(u    , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(uOLD , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(u_hat, cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(Ap_u , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(Aw_u , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(Ae_u , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(An_u , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(As_u , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(B_u  , cav_setup->n_x-1, cav_setup->n_y);
+
+	allocate_cvbound_2d(Re_x   , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_cvbound_2d(alpha_x, cav_setup->n_x-1, cav_setup->n_y);
+	allocate_cvbound_2d(beta_x , cav_setup->n_x-1, cav_setup->n_y);
+
+	allocate_vector_2d(v    , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(vOLD , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(v_hat, cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(Ap_v , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(Aw_v , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(Ae_v , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(An_v , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(As_v , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(B_v  , cav_setup->n_x, cav_setup->n_y-1);
+
+	allocate_cvbound_2d(Re_y   , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_cvbound_2d(alpha_y, cav_setup->n_x, cav_setup->n_y-1);
+	allocate_cvbound_2d(beta_y , cav_setup->n_x, cav_setup->n_y-1);
+
+	allocate_vector_2d(P   , cav_setup->n_x, cav_setup->n_y);
+	allocate_vector_2d(Pn  , cav_setup->n_x, cav_setup->n_y);
+	allocate_vector_2d(Ap_p, cav_setup->n_x, cav_setup->n_y);
+	allocate_vector_2d(Aw_p, cav_setup->n_x, cav_setup->n_y);
+	allocate_vector_2d(Ae_p, cav_setup->n_x, cav_setup->n_y);
+	allocate_vector_2d(An_p, cav_setup->n_x, cav_setup->n_y);
+	allocate_vector_2d(As_p, cav_setup->n_x, cav_setup->n_y);
+	allocate_vector_2d(B_p , cav_setup->n_x, cav_setup->n_y);
+
 	int IT = 0;
 	int TESTE =0;
 	double eu = 0.;
@@ -1076,6 +895,40 @@ int main()
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 	save_results(filename_results, cav_setup, u, v, Pn);
 
-	Destroy();
-}
+	deallocate_vector_2d(u    , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(uOLD , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(u_hat, cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(Ap_u , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(Aw_u , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(Ae_u , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(An_u , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(As_u , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(B_u  , cav_setup->n_x-1, cav_setup->n_y);
 
+	deallocate_cvbound_2d(Re_x   , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_cvbound_2d(alpha_x, cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_cvbound_2d(beta_x , cav_setup->n_x-1, cav_setup->n_y);
+
+	deallocate_vector_2d(v    , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(vOLD , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(v_hat, cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(Ap_v , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(Aw_v , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(Ae_v , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(An_v , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(As_v , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(B_v  , cav_setup->n_x, cav_setup->n_y-1);
+
+	deallocate_cvbound_2d(Re_y   , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_cvbound_2d(alpha_y, cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_cvbound_2d(beta_y , cav_setup->n_x, cav_setup->n_y-1);
+
+	deallocate_vector_2d(P   , cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(Pn  , cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(Ap_p, cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(Aw_p, cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(Ae_p, cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(An_p, cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(As_p, cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(B_p , cav_setup->n_x, cav_setup->n_y);
+}
