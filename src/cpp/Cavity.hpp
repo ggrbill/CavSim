@@ -1,5 +1,5 @@
-#ifndef CAVITY_H
-#define CAVITY_H
+#ifndef CAVITY_HPP
+#define CAVITY_HPP
 
 #include<memory>
 

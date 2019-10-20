@@ -7,7 +7,9 @@ add_library(${PROJECT_NAME}
             solver.cpp
             solver.hpp
             IO.cpp
-            IO.hpp)
+            IO.hpp
+            Legacy/Structures.cpp
+            Legacy/Structures.hpp)
 
 add_executable (${PROJECT_NAME}Old main.cpp)
 
