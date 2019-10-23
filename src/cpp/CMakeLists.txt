@@ -4,10 +4,10 @@ add_library(${PROJECT_NAME}
             STATIC
             Cavity.cpp
             Cavity.hpp
-            solver.cpp
-            solver.hpp
-            IO.cpp
-            IO.hpp
+            Legacy/solver.cpp
+            Legacy/solver.hpp
+            Legacy/IO.cpp
+            Legacy/IO.hpp
             Legacy/Structures.cpp
             Legacy/Structures.hpp)
 

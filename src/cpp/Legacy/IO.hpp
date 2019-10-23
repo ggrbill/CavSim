@@ -3,7 +3,7 @@
 
 #include <memory>
 
-#include "Cavity.hpp"
+#include "../Cavity.hpp"
 
 /*!
     Input data reader.

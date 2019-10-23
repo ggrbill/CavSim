@@ -6,8 +6,8 @@
 #include <iomanip>
 #include <math.h>
 
-#include "solver.hpp"
-#include "IO.hpp"
+#include "Legacy/solver.hpp"
+#include "Legacy/IO.hpp"
 #include "Legacy/Structures.hpp"
 
 #include "Cavity.hpp"
