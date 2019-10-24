@@ -798,7 +798,6 @@ int main()
 	std:: string filename_input = "./inCav.txt";
 	std:: string filename_results = "./outCav.txt";
 	
-	std::shared_ptr<CavitySetup> cav_setup;
 	std::tie(L, H, nv, rho, U, mi) = read_input_data(filename_input);
 
 	// Calculate Delta X e Delta Y
@@ -867,7 +866,7 @@ int main()
 		if((IT % 500) == 0)
 		{
 			cout << endl << "......Saving Partial Solution....." << endl;
-			save_results(filename_results, cav_setup, u, v, Pn);
+			save_results(filename_results, u, v, Pn, nv, dx, dy, U);
 		}
 		if( ((Erro_u() < (0.0001)) and ( Erro_v() < (0.0001) )) or (IT == 100000) )
 		{
@@ -887,7 +886,7 @@ int main()
 		);	
 	Correcao_u_v();
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
-	save_results(filename_results, cav_setup, u, v, Pn);
+	save_results(filename_results, u, v, Pn, nv, dx, dy, U);
 
 	deallocate_vector_2d(u    , n_x-1, n_y);
 	deallocate_vector_2d(uOLD , n_x-1, n_y);

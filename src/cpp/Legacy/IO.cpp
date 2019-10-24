@@ -31,13 +31,15 @@ std::tuple<double, double, int, double, double, double> read_input_data(std::str
 
 void save_results(
 	std::string filename, 
-	std::shared_ptr<CavitySetup> cav_setup, 
 	double** u,
 	double** v,
-	double** Pn)
+	double** Pn,
+	double nv, // For while it is assuming that n_x is equal to n_y
+	double dx,
+	double dy,
+	double U)
 {	
-	// For while it is assuming that n_x is equal to n_y
-	int nv = cav_setup->n_x; 
+	
 	std::ofstream fout;
 	fout << std::scientific;
 	fout.open(filename);
@@ -56,7 +58,7 @@ void save_results(
 			k = 0;
 		}
 		for (int i = 1; i < (nv + 1); i++) {
-			fout << i * cav_setup->dx << "  ";
+			fout << i * dx << "  ";
 			k++;
 			if (k == 9) {
 				fout << std::endl;
@@ -79,7 +81,7 @@ void save_results(
 	}
 	for (int j = 1; j < (nv + 1); j++) {
 		for (int i = 1; i < (nv + 2); i++) {
-			fout << j * cav_setup->dy << "  ";
+			fout << j * dy << "  ";
 			k++;
 			if (k == 9) {
 				fout << std::endl;
@@ -94,7 +96,7 @@ void save_results(
 	k = 0;
 	for (int j = 0; j < (nv); j++) {
 		for (int i = 0; i < (nv - 1); i++) {
-			fout << u[i][j] / cav_setup->U << "  ";
+			fout << u[i][j] / U << "  ";
 			k++;
 			if (k == 9) {
 				fout << std::endl;
@@ -115,7 +117,7 @@ void save_results(
 	k = 0;
 	for (int j = 0; j < (nv - 1); j++) {
 		for (int i = 0; i < (nv); i++) {
-			fout << v[i][j] / cav_setup->U << "  ";
+			fout << v[i][j] / U << "  ";
 			k++;
 			if (k == 9) {
 				fout << std::endl;

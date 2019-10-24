@@ -4,8 +4,6 @@
 #include <memory>
 #include <tuple>
 
-#include "../Cavity.hpp"
-
 /*!
     Input data reader.
 */
@@ -16,9 +14,12 @@ std::tuple<double, double, int, double, double, double> read_input_data(std::str
 */
 void save_results(
     std::string filename, 
-	std::shared_ptr<CavitySetup> cav_setup, 
 	double** u,
 	double** v,
-	double** Pn);
+	double** Pn,
+	double nv,
+	double dx,
+	double dy,
+	double U);
 
 #endif
