@@ -10,8 +10,6 @@
 #include "Legacy/IO.hpp"
 #include "Legacy/Structures.hpp"
 
-#include "Cavity.hpp"
-
 using namespace std;
 
 // Resulta matrices
@@ -801,55 +799,51 @@ int main()
 	std:: string filename_results = "./outCav.txt";
 	
 	std::shared_ptr<CavitySetup> cav_setup;
-	cav_setup = read_input_data(filename_input);
+	std::tie(L, H, nv, rho, U, mi) = read_input_data(filename_input);
 
-	L = cav_setup->L;	 
-	H = cav_setup->H;	
-	nv = cav_setup->n_x;	
-	rho = cav_setup->rho;	
-	U = cav_setup->U;	
-	mi = cav_setup->mu;	
-	
 	// Calculate Delta X e Delta Y
-	dx = cav_setup->dx; 
-	dy = cav_setup->dy;
+	dx = (double)L/nv; 
+	dy = (double)H/nv;
 
-	allocate_vector_2d(u    , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(uOLD , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(u_hat, cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(Ap_u , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(Aw_u , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(Ae_u , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(An_u , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(As_u , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_vector_2d(B_u  , cav_setup->n_x-1, cav_setup->n_y);
+	int n_x = nv;
+	int n_y = nv;
 
-	allocate_cvbound_2d(Re_x   , cav_setup->n_x-1, cav_setup->n_y);
-	allocate_cvbound_2d(alpha_x, cav_setup->n_x-1, cav_setup->n_y);
-	allocate_cvbound_2d(beta_x , cav_setup->n_x-1, cav_setup->n_y);
+	allocate_vector_2d(u    , n_x-1, n_y);
+	allocate_vector_2d(uOLD , n_x-1, n_y);
+	allocate_vector_2d(u_hat, n_x-1, n_y);
+	allocate_vector_2d(Ap_u , n_x-1, n_y);
+	allocate_vector_2d(Aw_u , n_x-1, n_y);
+	allocate_vector_2d(Ae_u , n_x-1, n_y);
+	allocate_vector_2d(An_u , n_x-1, n_y);
+	allocate_vector_2d(As_u , n_x-1, n_y);
+	allocate_vector_2d(B_u  , n_x-1, n_y);
 
-	allocate_vector_2d(v    , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(vOLD , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(v_hat, cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(Ap_v , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(Aw_v , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(Ae_v , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(An_v , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(As_v , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_vector_2d(B_v  , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_cvbound_2d(Re_x   , n_x-1, n_y);
+	allocate_cvbound_2d(alpha_x, n_x-1, n_y);
+	allocate_cvbound_2d(beta_x , n_x-1, n_y);
 
-	allocate_cvbound_2d(Re_y   , cav_setup->n_x, cav_setup->n_y-1);
-	allocate_cvbound_2d(alpha_y, cav_setup->n_x, cav_setup->n_y-1);
-	allocate_cvbound_2d(beta_y , cav_setup->n_x, cav_setup->n_y-1);
+	allocate_vector_2d(v    , n_x, n_y-1);
+	allocate_vector_2d(vOLD , n_x, n_y-1);
+	allocate_vector_2d(v_hat, n_x, n_y-1);
+	allocate_vector_2d(Ap_v , n_x, n_y-1);
+	allocate_vector_2d(Aw_v , n_x, n_y-1);
+	allocate_vector_2d(Ae_v , n_x, n_y-1);
+	allocate_vector_2d(An_v , n_x, n_y-1);
+	allocate_vector_2d(As_v , n_x, n_y-1);
+	allocate_vector_2d(B_v  , n_x, n_y-1);
 
-	allocate_vector_2d(P   , cav_setup->n_x, cav_setup->n_y);
-	allocate_vector_2d(Pn  , cav_setup->n_x, cav_setup->n_y);
-	allocate_vector_2d(Ap_p, cav_setup->n_x, cav_setup->n_y);
-	allocate_vector_2d(Aw_p, cav_setup->n_x, cav_setup->n_y);
-	allocate_vector_2d(Ae_p, cav_setup->n_x, cav_setup->n_y);
-	allocate_vector_2d(An_p, cav_setup->n_x, cav_setup->n_y);
-	allocate_vector_2d(As_p, cav_setup->n_x, cav_setup->n_y);
-	allocate_vector_2d(B_p , cav_setup->n_x, cav_setup->n_y);
+	allocate_cvbound_2d(Re_y   , n_x, n_y-1);
+	allocate_cvbound_2d(alpha_y, n_x, n_y-1);
+	allocate_cvbound_2d(beta_y , n_x, n_y-1);
+
+	allocate_vector_2d(P   , n_x, n_y);
+	allocate_vector_2d(Pn  , n_x, n_y);
+	allocate_vector_2d(Ap_p, n_x, n_y);
+	allocate_vector_2d(Aw_p, n_x, n_y);
+	allocate_vector_2d(Ae_p, n_x, n_y);
+	allocate_vector_2d(An_p, n_x, n_y);
+	allocate_vector_2d(As_p, n_x, n_y);
+	allocate_vector_2d(B_p , n_x, n_y);
 
 	int IT = 0;
 	int TESTE =0;
@@ -895,40 +889,40 @@ int main()
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 	save_results(filename_results, cav_setup, u, v, Pn);
 
-	deallocate_vector_2d(u    , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(uOLD , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(u_hat, cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(Ap_u , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(Aw_u , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(Ae_u , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(An_u , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(As_u , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_vector_2d(B_u  , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_vector_2d(u    , n_x-1, n_y);
+	deallocate_vector_2d(uOLD , n_x-1, n_y);
+	deallocate_vector_2d(u_hat, n_x-1, n_y);
+	deallocate_vector_2d(Ap_u , n_x-1, n_y);
+	deallocate_vector_2d(Aw_u , n_x-1, n_y);
+	deallocate_vector_2d(Ae_u , n_x-1, n_y);
+	deallocate_vector_2d(An_u , n_x-1, n_y);
+	deallocate_vector_2d(As_u , n_x-1, n_y);
+	deallocate_vector_2d(B_u  , n_x-1, n_y);
 
-	deallocate_cvbound_2d(Re_x   , cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_cvbound_2d(alpha_x, cav_setup->n_x-1, cav_setup->n_y);
-	deallocate_cvbound_2d(beta_x , cav_setup->n_x-1, cav_setup->n_y);
+	deallocate_cvbound_2d(Re_x   , n_x-1, n_y);
+	deallocate_cvbound_2d(alpha_x, n_x-1, n_y);
+	deallocate_cvbound_2d(beta_x , n_x-1, n_y);
 
-	deallocate_vector_2d(v    , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(vOLD , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(v_hat, cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(Ap_v , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(Aw_v , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(Ae_v , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(An_v , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(As_v , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_vector_2d(B_v  , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_vector_2d(v    , n_x, n_y-1);
+	deallocate_vector_2d(vOLD , n_x, n_y-1);
+	deallocate_vector_2d(v_hat, n_x, n_y-1);
+	deallocate_vector_2d(Ap_v , n_x, n_y-1);
+	deallocate_vector_2d(Aw_v , n_x, n_y-1);
+	deallocate_vector_2d(Ae_v , n_x, n_y-1);
+	deallocate_vector_2d(An_v , n_x, n_y-1);
+	deallocate_vector_2d(As_v , n_x, n_y-1);
+	deallocate_vector_2d(B_v  , n_x, n_y-1);
 
-	deallocate_cvbound_2d(Re_y   , cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_cvbound_2d(alpha_y, cav_setup->n_x, cav_setup->n_y-1);
-	deallocate_cvbound_2d(beta_y , cav_setup->n_x, cav_setup->n_y-1);
+	deallocate_cvbound_2d(Re_y   , n_x, n_y-1);
+	deallocate_cvbound_2d(alpha_y, n_x, n_y-1);
+	deallocate_cvbound_2d(beta_y , n_x, n_y-1);
 
-	deallocate_vector_2d(P   , cav_setup->n_x, cav_setup->n_y);
-	deallocate_vector_2d(Pn  , cav_setup->n_x, cav_setup->n_y);
-	deallocate_vector_2d(Ap_p, cav_setup->n_x, cav_setup->n_y);
-	deallocate_vector_2d(Aw_p, cav_setup->n_x, cav_setup->n_y);
-	deallocate_vector_2d(Ae_p, cav_setup->n_x, cav_setup->n_y);
-	deallocate_vector_2d(An_p, cav_setup->n_x, cav_setup->n_y);
-	deallocate_vector_2d(As_p, cav_setup->n_x, cav_setup->n_y);
-	deallocate_vector_2d(B_p , cav_setup->n_x, cav_setup->n_y);
+	deallocate_vector_2d(P   , n_x, n_y);
+	deallocate_vector_2d(Pn  , n_x, n_y);
+	deallocate_vector_2d(Ap_p, n_x, n_y);
+	deallocate_vector_2d(Aw_p, n_x, n_y);
+	deallocate_vector_2d(Ae_p, n_x, n_y);
+	deallocate_vector_2d(An_p, n_x, n_y);
+	deallocate_vector_2d(As_p, n_x, n_y);
+	deallocate_vector_2d(B_p , n_x, n_y);
 }

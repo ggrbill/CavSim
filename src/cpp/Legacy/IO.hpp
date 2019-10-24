@@ -2,13 +2,14 @@
 #define IO_HPP
 
 #include <memory>
+#include <tuple>
 
 #include "../Cavity.hpp"
 
 /*!
     Input data reader.
 */
-std::shared_ptr<CavitySetup> read_input_data(std::string filename);
+std::tuple<double, double, int, double, double, double> read_input_data(std::string filename);
 
 /*!
     Tecplot format Saver of results.

@@ -2,7 +2,7 @@
 
 #include "IO.hpp"
 
-std::shared_ptr<CavitySetup> read_input_data(std::string filename)
+std::tuple<double, double, int, double, double, double> read_input_data(std::string filename)
 {
 	double Length; 
 	double Height;
@@ -20,15 +20,13 @@ std::shared_ptr<CavitySetup> read_input_data(std::string filename)
 	fin >>  viscosity;
 	fin.close();
 
-	return std::make_shared<CavitySetup>(
-		Length, 
-		Height, 
-		n_rc, 
-		n_rc, 
-		density, 
-		viscosity,
-		vel_top_bound
-	);
+	return std::make_tuple(
+		Length,
+		Height,
+		n_rc,
+		density,
+		vel_top_bound,
+		viscosity);
 }
 
 void save_results(
