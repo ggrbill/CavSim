@@ -9,7 +9,9 @@ add_library(${PROJECT_NAME}
             Legacy/IO.cpp
             Legacy/IO.hpp
             Legacy/Structures.cpp
-            Legacy/Structures.hpp)
+            Legacy/Structures.hpp
+            Legacy/WUDS.cpp
+            Legacy/WUDS.hpp)
 
 add_executable (${PROJECT_NAME}Old main.cpp)
 
