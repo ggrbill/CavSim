@@ -9,6 +9,7 @@
 #include "Legacy/solver.hpp"
 #include "Legacy/IO.hpp"
 #include "Legacy/Structures.hpp"
+#include "Legacy/WUDS.hpp"
 
 using namespace std;
 
@@ -45,10 +46,8 @@ double **An_p;
 double **As_p;
 double **B_p;
 
-CVBoundaries **Re_x;
 CVBoundaries **alpha_x;
 CVBoundaries **beta_x;
-CVBoundaries **Re_y;
 CVBoundaries **alpha_y;
 CVBoundaries **beta_y;
 
@@ -67,24 +66,6 @@ double dy = 0.;
 void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 {
 	// Left-bottom corner
-	Re_x[0][0].e = (rho*((u[0][0]+u[1][0])/2.)*dx)/mi;
-	Re_x[0][0].n = (rho*((v[0][0]+v[1][0])/2.)*dy)/mi;
-	Re_x[0][0].w = (rho*(u[0][0]/2.)*dx)/mi;
-	Re_x[0][0].s = 0.;
-	alpha_x[0][0].e = pow(Re_x[0][0].e,2.)/(10.+2.*pow(Re_x[0][0].e,2.));
-	alpha_x[0][0].w = pow(Re_x[0][0].w,2.)/(10.+2.*pow(Re_x[0][0].w,2.));
-	alpha_x[0][0].n = pow(Re_x[0][0].n,2.)/(10.+2.*pow(Re_x[0][0].n,2.));
-	alpha_x[0][0].s = pow(Re_x[0][0].s,2.)/(10.+2.*pow(Re_x[0][0].s,2.));
-	beta_x[0][0].e = (1.+(0.005*pow(Re_x[0][0].e,2.)))/(1.+(0.05*pow(Re_x[0][0].e,2.)));
-	beta_x[0][0].w = (1.+(0.005*pow(Re_x[0][0].w,2.)))/(1.+(0.05*pow(Re_x[0][0].w,2.)));
-	beta_x[0][0].n = (1.+(0.005*pow(Re_x[0][0].n,2.)))/(1.+(0.05*pow(Re_x[0][0].n,2.)));
-	beta_x[0][0].s = (1.+(0.005*pow(Re_x[0][0].s,2.)))/(1.+(0.05*pow(Re_x[0][0].s,2.)));
-
-	if(Re_x[0][0].e < 0) { alpha_x[0][0].e = -alpha_x[0][0].e; }
-	if(Re_x[0][0].w < 0) { alpha_x[0][0].w = -alpha_x[0][0].w; }
-	if(Re_x[0][0].n < 0) { alpha_x[0][0].n = -alpha_x[0][0].n; }
-	if(Re_x[0][0].s < 0) { alpha_x[0][0].s = -alpha_x[0][0].s; }
-
 	Ae_u[0][0] = (((mi*beta_x[0][0].e*dy)/dx)-((rho*((u[0][0]+u[1][0])/2.)*dy)*(0.5-alpha_x[0][0].e)));
 	An_u[0][0] = (((mi*beta_x[0][0].n*dx)/dy)-((rho*((v[1][0]+v[0][0])/2.)*dx)*(0.5-alpha_x[0][0].n)));
 	Aw_u[0][0] = (((mi*beta_x[0][0].w*dy)/dx)+((rho*((u[0][0])/2.)*dy)*(0.5+alpha_x[0][0].w)));
@@ -93,24 +74,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	B_u[0][0] = 0.;
 
 	// Right-bottom corner
-	Re_x[nv-2][0].e = (rho*((u[nv-2][0])/2.)*dx)/mi;
-	Re_x[nv-2][0].n = (rho*((v[nv-2][0]+v[nv-1][0])/2.)*dx)/mi;
-	Re_x[nv-2][0].w = (rho*((u[nv-2][0]+u[nv-3][0])/2.)*dx)/mi; 
-	Re_x[nv-2][0].s = 0.;
-	alpha_x[nv-2][0].e = pow(Re_x[nv-2][0].e,2.)/(10.+2.*pow(Re_x[nv-2][0].e,2.));
-	alpha_x[nv-2][0].w = pow(Re_x[nv-2][0].w,2.)/(10.+2.*pow(Re_x[nv-2][0].w,2.));
-	alpha_x[nv-2][0].n = pow(Re_x[nv-2][0].n,2.)/(10.+2.*pow(Re_x[nv-2][0].n,2.));
-	alpha_x[nv-2][0].s = pow(Re_x[nv-2][0].s,2.)/(10.+2.*pow(Re_x[nv-2][0].s,2.));
-	beta_x[nv-2][0].e = (1.+(0.005*pow(Re_x[nv-2][0].e,2.)))/(1.+(0.05*pow(Re_x[nv-2][0].e,2.)));
-	beta_x[nv-2][0].w = (1.+(0.005*pow(Re_x[nv-2][0].w,2.)))/(1.+(0.05*pow(Re_x[nv-2][0].w,2.)));
-	beta_x[nv-2][0].n = (1.+(0.005*pow(Re_x[nv-2][0].n,2.)))/(1.+(0.05*pow(Re_x[nv-2][0].n,2.)));
-	beta_x[nv-2][0].s = (1.+(0.005*pow(Re_x[nv-2][0].s,2.)))/(1.+(0.05*pow(Re_x[nv-2][0].s,2.)));
-
-	if(Re_x[nv-2][0].e < 0) { alpha_x[nv-2][0].e = -alpha_x[nv-2][0].e; }
-	if(Re_x[nv-2][0].w < 0) { alpha_x[nv-2][0].w = -alpha_x[nv-2][0].w; }
-	if(Re_x[nv-2][0].n < 0) { alpha_x[nv-2][0].n = -alpha_x[nv-2][0].n; }
-	if(Re_x[nv-2][0].s < 0) { alpha_x[nv-2][0].s = -alpha_x[nv-2][0].s; }
-
 	Aw_u[nv-2][0] = (((mi*beta_x[nv-2][0].w*dy)/dx)+((rho*((u[nv-2][0]+u[nv-3][0])/2.)*dy)*(0.5+alpha_x[nv-2][0].w)));
 	An_u[nv-2][0] = (((mi*beta_x[nv-2][0].n*dx)/dy)-((rho*((v[nv-2][0]+v[nv-1][0])/2.)*dx)*(0.5-alpha_x[nv-2][0].n)));
 	Ae_u[nv-2][0] = (((mi*beta_x[nv-2][0].e*dy)/dx)-((rho*((u[nv-2][0])/2.)*dy)*(0.5-alpha_x[nv-2][0].e)));
@@ -119,24 +82,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	B_u[nv-2][0] = 0.;
 	
 	// Left-up corner
-	Re_x[0][nv-1].e = (rho*((u[0][nv-1]+u[1][nv-1])/2.)*dx)/mi;
-	Re_x[0][nv-1].n = 0.; //(rho*(U)*dx)/mi;
-	Re_x[0][nv-1].w = (rho*(u[0][nv-1]/2.)*dx)/mi;
-	Re_x[0][nv-1].s = (rho*((v[0][nv-2]+v[1][nv-2])/2.)*dx)/mi;
-	alpha_x[0][nv-1].e = pow(Re_x[0][nv-1].e,2.)/(10.+2.*pow(Re_x[0][nv-1].e,2.));
-	alpha_x[0][nv-1].w = pow(Re_x[0][nv-1].w,2.)/(10.+2.*pow(Re_x[0][nv-1].w,2.));
-	alpha_x[0][nv-1].n = pow(Re_x[0][nv-1].n,2.)/(10.+2.*pow(Re_x[0][nv-1].n,2.));
-	alpha_x[0][nv-1].s = pow(Re_x[0][nv-1].s,2.)/(10.+2.*pow(Re_x[0][nv-1].s,2.));
-	beta_x[0][nv-1].e = (1.+(0.005*pow(Re_x[0][nv-1].e,2.)))/(1.+(0.05*pow(Re_x[0][nv-1].e,2.)));
-	beta_x[0][nv-1].w = (1.+(0.005*pow(Re_x[0][nv-1].w,2.)))/(1.+(0.05*pow(Re_x[0][nv-1].w,2.)));
-	beta_x[0][nv-1].n = (1.+(0.005*pow(Re_x[0][nv-1].n,2.)))/(1.+(0.05*pow(Re_x[0][nv-1].n,2.)));
-	beta_x[0][nv-1].s = (1.+(0.005*pow(Re_x[0][nv-1].s,2.)))/(1.+(0.05*pow(Re_x[0][nv-1].s,2.)));
-
-	if(Re_x[0][nv-1].e < 0) { alpha_x[0][nv-1].e = -alpha_x[0][nv-1].e; }
-	if(Re_x[0][nv-1].w < 0) { alpha_x[0][nv-1].w = -alpha_x[0][nv-1].w; }
-	if(Re_x[0][nv-1].n < 0) { alpha_x[0][nv-1].n = -alpha_x[0][nv-1].n; }
-	if(Re_x[0][nv-1].s < 0) { alpha_x[0][nv-1].s = -alpha_x[0][nv-1].s; }
-
 	Ae_u[0][nv-1] = (((mi*beta_x[0][nv-1].e*dy)/dx)-((rho*((u[0][nv-1]+u[1][nv-1])/2.)*dy)*(0.5-alpha_x[0][nv-1].e)));
 	As_u[0][nv-1] = (((mi*beta_x[0][nv-1].s*dx)/dy)+((rho*((v[1][nv-2]+v[0][nv-2])/2.)*dx)*(0.5+alpha_x[0][nv-1].s)));
 	Aw_u[0][nv-1] = (((mi*beta_x[0][nv-1].w*dy)/dx)+((rho*((u[0][nv-1])/2.)*dy)*(0.5+alpha_x[0][nv-1].w)));
@@ -145,24 +90,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	B_u[0][nv-1] = ((2.*mi*beta_x[0][nv-1].n*U*dx)/dy);
 	
 	// Right-up corner
-	Re_x[nv-2][nv-1].e = (rho*((u[nv-2][nv-1])/2.)*dx)/mi;
-	Re_x[nv-2][nv-1].n = 0.; //(rho*(U)*dx)/mi;
-	Re_x[nv-2][nv-1].w = (rho*((u[nv-2][nv-1]+u[nv-3][nv-1])/2.)*dx)/mi;
-	Re_x[nv-2][nv-1].s = (rho*((v[nv-2][nv-2]+v[nv-1][nv-2])/2.)*dx)/mi;
-	alpha_x[nv-2][nv-1].e = pow(Re_x[nv-2][nv-1].e,2.)/(10.+2.*pow(Re_x[nv-2][nv-1].e,2.));
-	alpha_x[nv-2][nv-1].w = pow(Re_x[nv-2][nv-1].w,2.)/(10.+2.*pow(Re_x[nv-2][nv-1].w,2.));
-	alpha_x[nv-2][nv-1].n = pow(Re_x[nv-2][nv-1].n,2.)/(10.+2.*pow(Re_x[nv-2][nv-1].n,2.));
-	alpha_x[nv-2][nv-1].s = pow(Re_x[nv-2][nv-1].s,2.)/(10.+2.*pow(Re_x[nv-2][nv-1].s,2.));
-	beta_x[nv-2][nv-1].e = (1.+(0.005*pow(Re_x[nv-2][nv-1].e,2.)))/(1.+(0.05*pow(Re_x[nv-2][nv-1].e,2.)));
-	beta_x[nv-2][nv-1].w = (1.+(0.005*pow(Re_x[nv-2][nv-1].w,2.)))/(1.+(0.05*pow(Re_x[nv-2][nv-1].w,2.)));
-	beta_x[nv-2][nv-1].n = (1.+(0.005*pow(Re_x[nv-2][nv-1].n,2.)))/(1.+(0.05*pow(Re_x[nv-2][nv-1].n,2.)));
-	beta_x[nv-2][nv-1].s = (1.+(0.005*pow(Re_x[nv-2][nv-1].s,2.)))/(1.+(0.05*pow(Re_x[nv-2][nv-1].s,2.)));
-
-	if(Re_x[nv-2][nv-1].e < 0) { alpha_x[nv-2][nv-1].e = -alpha_x[nv-2][nv-1].e; }
-	if(Re_x[nv-2][nv-1].w < 0) { alpha_x[nv-2][nv-1].w = -alpha_x[nv-2][nv-1].w; }
-	if(Re_x[nv-2][nv-1].n < 0) { alpha_x[nv-2][nv-1].n = -alpha_x[nv-2][nv-1].n; }
-	if(Re_x[nv-2][nv-1].s < 0) { alpha_x[nv-2][nv-1].s = -alpha_x[nv-2][nv-1].s; }
-
 	Aw_u[nv-2][nv-1] = (((mi*beta_x[nv-2][nv-1].w*dy)/dx)+((rho*((u[nv-2][nv-1]+u[nv-3][nv-1])/2.)*dy)*(0.5+alpha_x[nv-2][nv-1].w)));
 	As_u[nv-2][nv-1] = (((mi*beta_x[nv-2][nv-1].s*dx)/dy)+((rho*((v[nv-2][nv-2]+v[nv-1][nv-2])/2.)*dx)*(0.5+alpha_x[nv-2][nv-1].s)));
 	Ae_u[nv-2][nv-1] = (((mi*beta_x[nv-2][nv-1].e*dy)/dx)-((rho*((u[nv-2][nv-1])/2.)*dy)*(0.5-alpha_x[nv-2][nv-1].e)));
@@ -173,24 +100,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	// North boundary volumes
 	for(int i=1;i<(nv-2);i++)
 	{
-		Re_x[i][nv-1].e = (rho*((u[i][nv-1]+u[i+1][nv-1])/2.)*dx)/mi;
-		Re_x[i][nv-1].s = (rho*((v[i][nv-2]+v[i+1][nv-2])/2.)*dx)/mi;
-		Re_x[i][nv-1].w = (rho*((u[i][nv-1]+u[i-1][nv-1])/2.)*dx)/mi;
-		Re_x[i][nv-1].n = 0.; //(rho*(U)*dx)/mi;
-		alpha_x[i][nv-1].e = pow(Re_x[i][nv-1].e,2.)/(10.+2.*pow(Re_x[i][nv-1].e,2.));
-		alpha_x[i][nv-1].w = pow(Re_x[i][nv-1].w,2.)/(10.+2.*pow(Re_x[i][nv-1].w,2.));
-		alpha_x[i][nv-1].n = pow(Re_x[i][nv-1].n,2.)/(10.+2.*pow(Re_x[i][nv-1].n,2.));
-		alpha_x[i][nv-1].s = pow(Re_x[i][nv-1].s,2.)/(10.+2.*pow(Re_x[i][nv-1].s,2.));
-		beta_x[i][nv-1].e = (1.+(0.005*pow(Re_x[i][nv-1].e,2.)))/(1.+(0.05*pow(Re_x[i][nv-1].e,2.)));
-		beta_x[i][nv-1].w = (1.+(0.005*pow(Re_x[i][nv-1].w,2.)))/(1.+(0.05*pow(Re_x[i][nv-1].w,2.)));
-		beta_x[i][nv-1].n = (1.+(0.005*pow(Re_x[i][nv-1].n,2.)))/(1.+(0.05*pow(Re_x[i][nv-1].n,2.)));
-		beta_x[i][nv-1].s = (1.+(0.005*pow(Re_x[i][nv-1].s,2.)))/(1.+(0.05*pow(Re_x[i][nv-1].s,2.)));
-
-		if(Re_x[i][nv-1].e < 0) { alpha_x[i][nv-1].e = -alpha_x[i][nv-1].e; }
-		if(Re_x[i][nv-1].w < 0) { alpha_x[i][nv-1].w = -alpha_x[i][nv-1].w; }
-		if(Re_x[i][nv-1].n < 0) { alpha_x[i][nv-1].n = -alpha_x[i][nv-1].n; }
-		if(Re_x[i][nv-1].s < 0) { alpha_x[i][nv-1].s = -alpha_x[i][nv-1].s; }
-
 		Ae_u[i][nv-1] = (((mi*beta_x[i][nv-1].e*dy)/dx)-((rho*((u[i][nv-1]+u[i+1][nv-1])/2.)*dy)*(0.5-alpha_x[i][nv-1].e)));
 		As_u[i][nv-1] = (((mi*beta_x[i][nv-1].s*dx)/dy)+((rho*((v[i+1][nv-2]+v[i][nv-2])/2.)*dx)*(0.5+alpha_x[i][nv-1].s)));
 		Aw_u[i][nv-1] = (((mi*beta_x[i][nv-1].w*dy)/dx)+((rho*((u[i-1][nv-1]+u[i][nv-1])/2.)*dy)*(0.5+alpha_x[i][nv-1].w)));
@@ -202,24 +111,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	// South boundary volumes
 	for(int i=1;i<(nv-2);i++)
 	{
-		Re_x[i][0].e = (rho*((u[i][0]+u[i+1][0])/2.)*dx)/mi;
-		Re_x[i][0].n = (rho*((v[i][0]+v[i+1][0])/2.)*dx)/mi;
-		Re_x[i][0].w = (rho*((u[i][0]+u[i-1][0])/2.)*dx)/mi;
-		Re_x[i][0].s = 0.;
-		alpha_x[i][0].e = pow(Re_x[i][0].e,2.)/(10.+2.*pow(Re_x[i][0].e,2.));
-		alpha_x[i][0].w = pow(Re_x[i][0].w,2.)/(10.+2.*pow(Re_x[i][0].w,2.));
-		alpha_x[i][0].n = pow(Re_x[i][0].n,2.)/(10.+2.*pow(Re_x[i][0].n,2.));
-		alpha_x[i][0].s = pow(Re_x[i][0].s,2.)/(10.+2.*pow(Re_x[i][0].s,2.));
-		beta_x[i][0].e = (1.+(0.005*pow(Re_x[i][0].e,2.)))/(1.+(0.05*pow(Re_x[i][0].e,2.)));
-		beta_x[i][0].w = (1.+(0.005*pow(Re_x[i][0].w,2.)))/(1.+(0.05*pow(Re_x[i][0].w,2.)));
-		beta_x[i][0].n = (1.+(0.005*pow(Re_x[i][0].n,2.)))/(1.+(0.05*pow(Re_x[i][0].n,2.)));
-		beta_x[i][0].s = (1.+(0.005*pow(Re_x[i][0].s,2.)))/(1.+(0.05*pow(Re_x[i][0].s,2.)));
-
-		if(Re_x[i][0].e < 0) { alpha_x[i][0].e = -alpha_x[i][0].e; }
-		if(Re_x[i][0].w < 0) { alpha_x[i][0].w = -alpha_x[i][0].w; }
-		if(Re_x[i][0].n < 0) { alpha_x[i][0].n = -alpha_x[i][0].n; }
-		if(Re_x[i][0].s < 0) { alpha_x[i][0].s = -alpha_x[i][0].s; }
-		
 		Ae_u[i][0] = (((mi*beta_x[i][0].e*dy)/dx)-((rho*((u[i][0]+u[i+1][0])/2.)*dy)*(0.5-alpha_x[i][0].e)));
 		An_u[i][0] = (((mi*beta_x[i][0].n*dx)/dy)-((rho*((v[i+1][0]+v[i][0])/2.)*dx)*(0.5-alpha_x[i][0].n)));
 		Aw_u[i][0] = (((mi*beta_x[i][0].w*dy)/dx)+((rho*((u[i-1][0]+u[i][0])/2.)*dy)*(0.5+alpha_x[i][0].w)));
@@ -231,24 +122,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	// East boundary volumes
 	for(int j=1;j<(nv-1);j++)
 	{
-		Re_x[nv-2][j].e = (rho*((u[nv-2][j])/2.)*dx)/mi;
-		Re_x[nv-2][j].n = (rho*((v[nv-2][j]+v[nv-1][j])/2.)*dx)/mi;
-		Re_x[nv-2][j].w = (rho*((u[nv-2][j]+u[nv-3][j])/2.)*dx)/mi;
-		Re_x[nv-2][j].s = (rho*((v[nv-2][j-1]+v[nv-1][j-1])/2.)*dx)/mi;
-		alpha_x[nv-2][j].e = pow(Re_x[nv-2][j].e,2.)/(10.+2.*pow(Re_x[nv-2][j].e,2.));
-		alpha_x[nv-2][j].w = pow(Re_x[nv-2][j].w,2.)/(10.+2.*pow(Re_x[nv-2][j].w,2.));
-		alpha_x[nv-2][j].n = pow(Re_x[nv-2][j].n,2.)/(10.+2.*pow(Re_x[nv-2][j].n,2.));
-		alpha_x[nv-2][j].s = pow(Re_x[nv-2][j].s,2.)/(10.+2.*pow(Re_x[nv-2][j].s,2.));
-		beta_x[nv-2][j].e = (1.+(0.005*pow(Re_x[nv-2][j].e,2.)))/(1.+(0.05*pow(Re_x[nv-2][j].e,2.)));
-		beta_x[nv-2][j].w = (1.+(0.005*pow(Re_x[nv-2][j].w,2.)))/(1.+(0.05*pow(Re_x[nv-2][j].w,2.)));
-		beta_x[nv-2][j].n = (1.+(0.005*pow(Re_x[nv-2][j].n,2.)))/(1.+(0.05*pow(Re_x[nv-2][j].n,2.)));
-		beta_x[nv-2][j].s = (1.+(0.005*pow(Re_x[nv-2][j].s,2.)))/(1.+(0.05*pow(Re_x[nv-2][j].s,2.)));
-
-		if(Re_x[nv-2][j].e < 0) { alpha_x[nv-2][j].e = -alpha_x[nv-2][j].e; }
-		if(Re_x[nv-2][j].w < 0) { alpha_x[nv-2][j].w = -alpha_x[nv-2][j].w; }
-		if(Re_x[nv-2][j].n < 0) { alpha_x[nv-2][j].n = -alpha_x[nv-2][j].n; }
-		if(Re_x[nv-2][j].s < 0) { alpha_x[nv-2][j].s = -alpha_x[nv-2][j].s; }
-
 		As_u[nv-2][j] = (((mi*beta_x[nv-2][j].s*dx)/dy)+((rho*((v[nv-2][j-1]+v[nv-1][j-1])/2.)*dx)*(0.5+alpha_x[nv-2][j].s)));
 		An_u[nv-2][j] = (((mi*beta_x[nv-2][j].n*dx)/dy)-((rho*((v[nv-2][j]+v[nv-1][j])/2.)*dx)*(0.5-alpha_x[nv-2][j].n)));
 		Aw_u[nv-2][j] = (((mi*beta_x[nv-2][j].w*dy)/dx)+((rho*((u[nv-2][j]+u[nv-3][j])/2.)*dy)*(0.5+alpha_x[nv-2][j].w)));
@@ -260,24 +133,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	// West boundary volumes
 	for(int j=1;j<(nv-1);j++)
 	{
-		Re_x[0][j].e = (rho*((u[0][j]+u[1][j])/2.)*dx)/mi;
-		Re_x[0][j].n = (rho*((v[0][j]+v[1][j])/2.)*dx)/mi;
-		Re_x[0][j].w = (rho*((u[0][j])/2.)*dx)/mi;
-		Re_x[0][j].s = (rho*((v[0][j-1]+v[1][j-1])/2.)*dx)/mi;
-		alpha_x[0][j].e = pow(Re_x[0][j].e,2.)/(10.+2.*pow(Re_x[0][j].e,2.));
-		alpha_x[0][j].w = pow(Re_x[0][j].w,2.)/(10.+2.*pow(Re_x[0][j].w,2.));
-		alpha_x[0][j].n = pow(Re_x[0][j].n,2.)/(10.+2.*pow(Re_x[0][j].n,2.));
-		alpha_x[0][j].s = pow(Re_x[0][j].s,2.)/(10.+2.*pow(Re_x[0][j].s,2.));
-		beta_x[0][j].e = (1.+(0.005*pow(Re_x[0][j].e,2.)))/(1.+(0.05*pow(Re_x[0][j].e,2.)));
-		beta_x[0][j].w = (1.+(0.005*pow(Re_x[0][j].w,2.)))/(1.+(0.05*pow(Re_x[0][j].w,2.)));
-		beta_x[0][j].n = (1.+(0.005*pow(Re_x[0][j].n,2.)))/(1.+(0.05*pow(Re_x[0][j].n,2.)));
-		beta_x[0][j].s = (1.+(0.005*pow(Re_x[0][j].s,2.)))/(1.+(0.05*pow(Re_x[0][j].s,2.)));
-
-		if(Re_x[0][j].e < 0) { alpha_x[0][j].e = -alpha_x[0][j].e; }
-		if(Re_x[0][j].w < 0) { alpha_x[0][j].w = -alpha_x[0][j].w; }
-		if(Re_x[0][j].n < 0) { alpha_x[0][j].n = -alpha_x[0][j].n; }
-		if(Re_x[0][j].s < 0) { alpha_x[0][j].s = -alpha_x[0][j].s; }
-		
 		As_u[0][j] = (((mi*beta_x[0][j].s*dx)/dy)+((rho*((v[0][j-1]+v[1][j-1])/2.)*dx)*(0.5+alpha_x[0][j].s)));
 		An_u[0][j] = (((mi*beta_x[0][j].n*dx)/dy)-((rho*((v[0][j]+v[1][j])/2.)*dx)*(0.5-alpha_x[0][j].n)));
 		Ae_u[0][j] = (((mi*beta_x[0][j].e*dy)/dx)-((rho*((u[0][j]+u[1][j])/2.)*dy)*(0.5-alpha_x[0][j].e)));
@@ -290,24 +145,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 	{
 		for(int j=1;j<(nv-1);j++)
 		{
-			Re_x[i][j].e = (rho*((u[i][j]+u[i+1][j])/2.)*dx)/mi;
-			Re_x[i][j].n = (rho*((v[i+1][j]+v[i][j])/2.)*dy)/mi;
-			Re_x[i][j].w = (rho*((u[i][j]+u[i-1][j])/2.)*dx)/mi;
-			Re_x[i][j].s = (rho*((v[i][j-1]+v[i+1][j-1])/2.)*dy)/mi;
-			alpha_x[i][j].e = pow(Re_x[i][j].e,2.)/(10.+2.*pow(Re_x[i][j].e,2.));
-			alpha_x[i][j].w = pow(Re_x[i][j].w,2.)/(10.+2.*pow(Re_x[i][j].w,2.));
-			alpha_x[i][j].n = pow(Re_x[i][j].n,2.)/(10.+2.*pow(Re_x[i][j].n,2.));
-			alpha_x[i][j].s = pow(Re_x[i][j].s,2.)/(10.+2.*pow(Re_x[i][j].s,2.));
-			beta_x[i][j].e = (1.+(0.005*pow(Re_x[i][j].e,2.)))/(1.+(0.05*pow(Re_x[i][j].e,2.)));
-			beta_x[i][j].w = (1.+(0.005*pow(Re_x[i][j].w,2.)))/(1.+(0.05*pow(Re_x[i][j].w,2.)));
-			beta_x[i][j].n = (1.+(0.005*pow(Re_x[i][j].n,2.)))/(1.+(0.05*pow(Re_x[i][j].n,2.)));
-			beta_x[i][j].s = (1.+(0.005*pow(Re_x[i][j].s,2.)))/(1.+(0.05*pow(Re_x[i][j].s,2.)));
-			
-			if(Re_x[i][j].e < 0) { alpha_x[i][j].e = -alpha_x[i][j].e; }
-			if(Re_x[i][j].w < 0) { alpha_x[i][j].w = -alpha_x[i][j].w; }
-			if(Re_x[i][j].n < 0) { alpha_x[i][j].n = -alpha_x[i][j].n; }
-			if(Re_x[i][j].s < 0) { alpha_x[i][j].s = -alpha_x[i][j].s; }
-			
 			As_u[i][j] = (((mi*beta_x[i][j].s*dx)/dy)+((rho*((v[i][j-1]+v[i+1][j-1])/2.)*dx)*(0.5+alpha_x[i][j].s)));
 			An_u[i][j] = (((mi*beta_x[i][j].n*dx)/dy)-((rho*((v[i][j]+v[i+1][j])/2.)*dx)*(0.5-alpha_x[i][j].n)));
 			Ae_u[i][j] = (((mi*beta_x[i][j].e*dy)/dx)-((rho*((u[i][j]+u[i+1][j])/2.)*dy)*(0.5-alpha_x[i][j].e)));
@@ -322,24 +159,6 @@ void Calc_Coef_NS_X()  //Calculate Coefficients for u - NS_x
 void Calc_Coef_NS_Y()
 {
 	// Left-bottom corner
-	Re_y[0][0].e = (rho*((u[0][0]+u[0][1])/2.)*dy)/mi;
-	Re_y[0][0].n = (rho*((v[0][1]+v[0][0])/2.)*dy)/mi;
-	Re_y[0][0].w = 0.;
-	Re_y[0][0].s = (rho*((v[0][0])/2.)*dy)/mi;
-	alpha_y[0][0].e = pow(Re_y[0][0].e,2.)/(10.+2.*pow(Re_y[0][0].e,2.));
-	alpha_y[0][0].w = pow(Re_y[0][0].w,2.)/(10.+2.*pow(Re_y[0][0].w,2.));
-	alpha_y[0][0].n = pow(Re_y[0][0].n,2.)/(10.+2.*pow(Re_y[0][0].n,2.));
-	alpha_y[0][0].s = pow(Re_y[0][0].s,2.)/(10.+2.*pow(Re_y[0][0].s,2.));
-	beta_y[0][0].e = (1.+(0.005*pow(Re_y[0][0].e,2.)))/(1.+(0.05*pow(Re_y[0][0].e,2.)));
-	beta_y[0][0].w = (1.+(0.005*pow(Re_y[0][0].w,2.)))/(1.+(0.05*pow(Re_y[0][0].w,2.)));
-	beta_y[0][0].n = (1.+(0.005*pow(Re_y[0][0].n,2.)))/(1.+(0.05*pow(Re_y[0][0].n,2.)));
-	beta_y[0][0].s = (1.+(0.005*pow(Re_y[0][0].s,2.)))/(1.+(0.05*pow(Re_y[0][0].s,2.)));
-		
-	if(Re_y[0][0].e < 0) { alpha_y[0][0].e = -alpha_y[0][0].e; }
-	if(Re_y[0][0].w < 0) { alpha_y[0][0].w = -alpha_y[0][0].w; }
-	if(Re_y[0][0].n < 0) { alpha_y[0][0].n = -alpha_y[0][0].n; }
-	if(Re_y[0][0].s < 0) { alpha_y[0][0].s = -alpha_y[0][0].s; }
-	
 	As_v[0][0] = (((mi*beta_y[0][0].s*dx)/dy)+((rho*((v[0][0])/2.)*dx)*(0.5+alpha_y[0][0].s)));
 	An_v[0][0] = (((mi*beta_y[0][0].n*dx)/dy)-((rho*((v[0][1]+v[0][0])/2.)*dx)*(0.5-alpha_y[0][0].n)));
 	Ae_v[0][0] = (((mi*beta_y[0][0].e*dy)/dx)-((rho*((u[0][1]+u[0][0])/2.)*dy)*(0.5-alpha_y[0][0].e)));
@@ -348,24 +167,6 @@ void Calc_Coef_NS_Y()
 	B_v[0][0] = 0.;
 
 	// Right-bottom corner
-	Re_y[nv-1][0].e = 0.;
-	Re_y[nv-1][0].n = (rho*((v[nv-1][1]+v[nv-1][0])/2.)*dy)/mi;
-	Re_y[nv-1][0].w = (rho*((u[nv-2][0]+u[nv-2][1])/2.)*dy)/mi;
-	Re_y[nv-1][0].s = (rho*((v[nv-1][0])/2.)*dy)/mi;
-	alpha_y[nv-1][0].e = pow(Re_y[nv-1][0].e,2.)/(10.+2.*pow(Re_y[nv-1][0].e,2.));
-	alpha_y[nv-1][0].w = pow(Re_y[nv-1][0].w,2.)/(10.+2.*pow(Re_y[nv-1][0].w,2.));
-	alpha_y[nv-1][0].n = pow(Re_y[nv-1][0].n,2.)/(10.+2.*pow(Re_y[nv-1][0].n,2.));
-	alpha_y[nv-1][0].s = pow(Re_y[nv-1][0].s,2.)/(10.+2.*pow(Re_y[nv-1][0].s,2.));
-	beta_y[nv-1][0].e = (1.+(0.005*pow(Re_y[nv-1][0].e,2.)))/(1.+(0.05*pow(Re_y[nv-1][0].e,2.)));
-	beta_y[nv-1][0].w = (1.+(0.005*pow(Re_y[nv-1][0].w,2.)))/(1.+(0.05*pow(Re_y[nv-1][0].w,2.)));
-	beta_y[nv-1][0].n = (1.+(0.005*pow(Re_y[nv-1][0].n,2.)))/(1.+(0.05*pow(Re_y[nv-1][0].n,2.)));
-	beta_y[nv-1][0].s = (1.+(0.005*pow(Re_y[nv-1][0].s,2.)))/(1.+(0.05*pow(Re_y[nv-1][0].s,2.)));
-			
-	if(Re_y[nv-1][0].e < 0) { alpha_y[nv-1][0].e = -alpha_y[nv-1][0].e; }
-	if(Re_y[nv-1][0].w < 0) { alpha_y[nv-1][0].w = -alpha_y[nv-1][0].w; }
-	if(Re_y[nv-1][0].n < 0) { alpha_y[nv-1][0].n = -alpha_y[nv-1][0].n; }
-	if(Re_y[nv-1][0].s < 0) { alpha_y[nv-1][0].s = -alpha_y[nv-1][0].s; }
-			
 	As_v[nv-1][0] = (((mi*beta_y[nv-1][0].s*dx)/dy)+((rho*((v[nv-1][0])/2.)*dx)*(0.5+alpha_y[nv-1][0].s)));
 	An_v[nv-1][0] = (((mi*beta_y[nv-1][0].n*dx)/dy)-((rho*((v[nv-1][0]+v[nv-1][1])/2.)*dx)*(0.5-alpha_y[nv-1][0].n)));
 	Ae_v[nv-1][0] = ((2.*mi*beta_y[nv-1][0].e*dy)/dx);
@@ -374,24 +175,6 @@ void Calc_Coef_NS_Y()
 	B_v[nv-1][0] = 0.;
 
 	// Left-up corner
-	Re_y[0][nv-2].e = (rho*((u[0][nv-2]+u[0][nv-1])/2.)*dy)/mi;
-	Re_y[0][nv-2].n = (rho*((v[0][nv-2])/2.)*dy)/mi;
-	Re_y[0][nv-2].w = 0.;
-	Re_y[0][nv-2].s = (rho*((v[0][nv-3]+v[0][nv-2])/2.)*dy)/mi;
-	alpha_y[0][nv-2].e = pow(Re_y[0][nv-2].e,2.)/(10.+2.*pow(Re_y[0][nv-2].e,2.));
-	alpha_y[0][nv-2].w = pow(Re_y[0][nv-2].w,2.)/(10.+2.*pow(Re_y[0][nv-2].w,2.));
-	alpha_y[0][nv-2].n = pow(Re_y[0][nv-2].n,2.)/(10.+2.*pow(Re_y[0][nv-2].n,2.));
-	alpha_y[0][nv-2].s = pow(Re_y[0][nv-2].s,2.)/(10.+2.*pow(Re_y[0][nv-2].s,2.));
-	beta_y[0][nv-2].e = (1.+(0.005*pow(Re_y[0][nv-2].e,2.)))/(1.+(0.05*pow(Re_y[0][nv-2].e,2.)));
-	beta_y[0][nv-2].w = (1.+(0.005*pow(Re_y[0][nv-2].w,2.)))/(1.+(0.05*pow(Re_y[0][nv-2].w,2.)));
-	beta_y[0][nv-2].n = (1.+(0.005*pow(Re_y[0][nv-2].n,2.)))/(1.+(0.05*pow(Re_y[0][nv-2].n,2.)));
-	beta_y[0][nv-2].s = (1.+(0.005*pow(Re_y[0][nv-2].s,2.)))/(1.+(0.05*pow(Re_y[0][nv-2].s,2.)));
-			
-	if(Re_y[0][nv-2].e < 0) { alpha_y[0][nv-2].e = -alpha_y[0][nv-2].e; }
-	if(Re_y[0][nv-2].w < 0) { alpha_y[0][nv-2].w = -alpha_y[0][nv-2].w; }
-	if(Re_y[0][nv-2].n < 0) { alpha_y[0][nv-2].n = -alpha_y[0][nv-2].n; }
-	if(Re_y[0][nv-2].s < 0) { alpha_y[0][nv-2].s = -alpha_y[0][nv-2].s; }
-
 	As_v[0][nv-2] = (((mi*beta_y[0][nv-2].s*dx)/dy)+((rho*((v[0][nv-3]+v[0][nv-2])/2.)*dx)*(0.5+alpha_y[0][nv-2].s)));
 	An_v[0][nv-2] = (((mi*beta_y[0][nv-2].n*dx)/dy)-((rho*((v[0][nv-2])/2.)*dx)*(0.5-alpha_y[0][nv-2].n)));
 	Ae_v[0][nv-2] = (((mi*beta_y[0][nv-2].e*dy)/dx)-((rho*((u[0][nv-1]+u[0][nv-2])/2.)*dy)*(0.5-alpha_y[0][nv-2].e)));
@@ -400,24 +183,6 @@ void Calc_Coef_NS_Y()
 	B_v[0][nv-2] = 0.;
 
 	// Right-up corner
-	Re_y[nv-1][nv-2].e = 0.;
-	Re_y[nv-1][nv-2].n = (rho*((v[nv-1][nv-2])/2.)*dy)/mi;
-	Re_y[nv-1][nv-2].w = (rho*((u[nv-2][nv-2]+u[nv-2][nv-1])/2.)*dy)/mi;
-	Re_y[nv-1][nv-2].s = (rho*((v[nv-1][nv-3]+v[nv-1][nv-2])/2.)*dy)/mi;
-	alpha_y[nv-1][nv-2].e = pow(Re_y[nv-1][nv-2].e,2.)/(10.+2.*pow(Re_y[nv-1][nv-2].e,2.));
-	alpha_y[nv-1][nv-2].w = pow(Re_y[nv-1][nv-2].w,2.)/(10.+2.*pow(Re_y[nv-1][nv-2].w,2.));
-	alpha_y[nv-1][nv-2].n = pow(Re_y[nv-1][nv-2].n,2.)/(10.+2.*pow(Re_y[nv-1][nv-2].n,2.));
-	alpha_y[nv-1][nv-2].s = pow(Re_y[nv-1][nv-2].s,2.)/(10.+2.*pow(Re_y[nv-1][nv-2].s,2.));
-	beta_y[nv-1][nv-2].e = (1.+(0.005*pow(Re_y[nv-1][nv-2].e,2.)))/(1.+(0.05*pow(Re_y[nv-1][nv-2].e,2.)));
-	beta_y[nv-1][nv-2].w = (1.+(0.005*pow(Re_y[nv-1][nv-2].w,2.)))/(1.+(0.05*pow(Re_y[nv-1][nv-2].w,2.)));
-	beta_y[nv-1][nv-2].n = (1.+(0.005*pow(Re_y[nv-1][nv-2].n,2.)))/(1.+(0.05*pow(Re_y[nv-1][nv-2].n,2.)));
-	beta_y[nv-1][nv-2].s = (1.+(0.005*pow(Re_y[nv-1][nv-2].s,2.)))/(1.+(0.05*pow(Re_y[nv-1][nv-2].s,2.)));
-			
-	if(Re_y[nv-1][nv-2].e < 0) { alpha_y[nv-1][nv-2].e = -alpha_y[nv-1][nv-2].e; }
-	if(Re_y[nv-1][nv-2].w < 0) { alpha_y[nv-1][nv-2].w = -alpha_y[nv-1][nv-2].w; }
-	if(Re_y[nv-1][nv-2].n < 0) { alpha_y[nv-1][nv-2].n = -alpha_y[nv-1][nv-2].n; }
-	if(Re_y[nv-1][nv-2].s < 0) { alpha_y[nv-1][nv-2].s = -alpha_y[nv-1][nv-2].s; }
-			
 	As_v[nv-1][nv-2] = (((mi*beta_y[nv-1][nv-2].s*dx)/dy)+((rho*((v[nv-1][nv-3]+v[nv-1][nv-2])/2.)*dx)*(0.5+alpha_y[nv-1][nv-2].s)));
 	An_v[nv-1][nv-2] = (((mi*beta_y[nv-1][nv-2].n*dx)/dy)-((rho*((v[nv-1][nv-2])/2.)*dx)*(0.5-alpha_y[nv-1][nv-2].n)));
 	Ae_v[nv-1][nv-2] = ((2.*mi*beta_y[nv-1][nv-2].e*dy)/dx);
@@ -428,24 +193,6 @@ void Calc_Coef_NS_Y()
 	// North boundary volumes
 	for(int i=1;i<(nv-1);i++)
 	{
-		Re_y[i][nv-2].e = (rho*((u[i][nv-2]+u[i][nv-1])/2.)*dy)/mi;
-		Re_y[i][nv-2].n = (rho*((v[i][nv-2])/2.)*dy)/mi;
-		Re_y[i][nv-2].w = (rho*((u[i-1][nv-1]+u[i-1][nv-2])/2.)*dy)/mi;
-		Re_y[i][nv-2].s = (rho*((v[i][nv-3]+v[i][nv-2])/2.)*dy)/mi;
-		alpha_y[i][nv-2].e = pow(Re_y[i][nv-2].e,2.)/(10.+2.*pow(Re_y[i][nv-2].e,2.));
-		alpha_y[i][nv-2].w = pow(Re_y[i][nv-2].w,2.)/(10.+2.*pow(Re_y[i][nv-2].w,2.));
-		alpha_y[i][nv-2].n = pow(Re_y[i][nv-2].n,2.)/(10.+2.*pow(Re_y[i][nv-2].n,2.));
-		alpha_y[i][nv-2].s = pow(Re_y[i][nv-2].s,2.)/(10.+2.*pow(Re_y[i][nv-2].s,2.));
-		beta_y[i][nv-2].e = (1.+(0.005*pow(Re_y[i][nv-2].e,2.)))/(1.+(0.05*pow(Re_y[i][nv-2].e,2.)));
-		beta_y[i][nv-2].w = (1.+(0.005*pow(Re_y[i][nv-2].w,2.)))/(1.+(0.05*pow(Re_y[i][nv-2].w,2.)));
-		beta_y[i][nv-2].n = (1.+(0.005*pow(Re_y[i][nv-2].n,2.)))/(1.+(0.05*pow(Re_y[i][nv-2].n,2.)));
-		beta_y[i][nv-2].s = (1.+(0.005*pow(Re_y[i][nv-2].s,2.)))/(1.+(0.05*pow(Re_y[i][nv-2].s,2.)));
-			
-		if(Re_y[i][nv-2].e < 0) { alpha_y[i][nv-2].e = -alpha_y[i][nv-2].e; }
-		if(Re_y[i][nv-2].w < 0) { alpha_y[i][nv-2].w = -alpha_y[i][nv-2].w; }
-		if(Re_y[i][nv-2].n < 0) { alpha_y[i][nv-2].n = -alpha_y[i][nv-2].n; }
-		if(Re_y[i][nv-2].s < 0) { alpha_y[i][nv-2].s = -alpha_y[i][nv-2].s; }
-			
 		As_v[i][nv-2] = (((mi*beta_y[i][nv-2].s*dx)/dy)+((rho*((v[i][nv-3]+v[i][nv-2])/2.)*dx)*(0.5+alpha_y[i][nv-2].s)));
 		An_v[i][nv-2] = (((mi*beta_y[i][nv-2].n*dx)/dy)-((rho*((v[i][nv-2])/2.)*dx)*(0.5-alpha_y[i][nv-2].n)));
 		Ae_v[i][nv-2] = (((mi*beta_y[i][nv-2].e*dy)/dx)-((rho*((u[i][nv-1]+u[i][nv-2])/2.)*dy)*(0.5-alpha_y[i][nv-2].e)));
@@ -456,24 +203,6 @@ void Calc_Coef_NS_Y()
 	// South boundary volumes
 	for(int i=1;i<(nv-1);i++)
 	{
-		Re_y[i][0].e = (rho*((u[i][0]+u[i][1])/2.)*dy)/mi;
-		Re_y[i][0].n = (rho*((v[i][0]+v[i][1])/2.)*dy)/mi;
-		Re_y[i][0].w = (rho*((u[i-1][0]+u[i-1][1])/2.)*dy)/mi;
-		Re_y[i][0].s = (rho*((v[i][0])/2.)*dy)/mi;
-		alpha_y[i][0].e = pow(Re_y[i][0].e,2.)/(10.+2.*pow(Re_y[i][0].e,2.));
-		alpha_y[i][0].w = pow(Re_y[i][0].w,2.)/(10.+2.*pow(Re_y[i][0].w,2.));
-		alpha_y[i][0].n = pow(Re_y[i][0].n,2.)/(10.+2.*pow(Re_y[i][0].n,2.));
-		alpha_y[i][0].s = pow(Re_y[i][0].s,2.)/(10.+2.*pow(Re_y[i][0].s,2.));
-		beta_y[i][0].e = (1.+(0.005*pow(Re_y[i][0].e,2.)))/(1.+(0.05*pow(Re_y[i][0].e,2.)));
-		beta_y[i][0].w = (1.+(0.005*pow(Re_y[i][0].w,2.)))/(1.+(0.05*pow(Re_y[i][0].w,2.)));
-		beta_y[i][0].n = (1.+(0.005*pow(Re_y[i][0].n,2.)))/(1.+(0.05*pow(Re_y[i][0].n,2.)));
-		beta_y[i][0].s = (1.+(0.005*pow(Re_y[i][0].s,2.)))/(1.+(0.05*pow(Re_y[i][0].s,2.)));
-		
-		if(Re_y[i][0].e < 0) { alpha_y[i][0].e = -alpha_y[i][0].e; }
-		if(Re_y[i][0].w < 0) { alpha_y[i][0].w = -alpha_y[i][0].w; }
-		if(Re_y[i][0].n < 0) { alpha_y[i][0].n = -alpha_y[i][0].n; }
-		if(Re_y[i][0].s < 0) { alpha_y[i][0].s = -alpha_y[i][0].s; }
-				
 		As_v[i][0] = (((mi*beta_y[i][0].s*dx)/dy)+((rho*((v[i][0])/2.)*dx)*(0.5+alpha_y[i][0].s)));
 		An_v[i][0] = (((mi*beta_y[i][0].n*dx)/dy)-((rho*((v[i][1]+v[i][0])/2.)*dx)*(0.5-alpha_y[i][0].n)));
 		Ae_v[i][0] = (((mi*beta_y[i][0].e*dy)/dx)-((rho*((u[i][1]+u[i][0])/2.)*dy)*(0.5-alpha_y[i][0].e)));
@@ -484,24 +213,6 @@ void Calc_Coef_NS_Y()
 	// East boundary volumes
 	for(int j=1;j<(nv-2);j++)
 	{
-		Re_y[nv-1][j].e = 0.;
-		Re_y[nv-1][j].n = (rho*((v[nv-1][j+1]+v[nv-1][j])/2.)*dy)/mi;
-		Re_y[nv-1][j].w = (rho*((u[nv-2][j+1]+u[nv-2][j])/2.)*dy)/mi;
-		Re_y[nv-1][j].s = (rho*((v[nv-1][j-1]+v[nv-1][j])/2.)*dy)/mi;
-		alpha_y[nv-1][j].e = pow(Re_y[nv-1][j].e,2.)/(10.+2.*pow(Re_y[nv-1][j].e,2.));
-		alpha_y[nv-1][j].w = pow(Re_y[nv-1][j].w,2.)/(10.+2.*pow(Re_y[nv-1][j].w,2.));
-		alpha_y[nv-1][j].n = pow(Re_y[nv-1][j].n,2.)/(10.+2.*pow(Re_y[nv-1][j].n,2.));
-		alpha_y[nv-1][j].s = pow(Re_y[nv-1][j].s,2.)/(10.+2.*pow(Re_y[nv-1][j].s,2.));
-		beta_y[nv-1][j].e = (1.+(0.005*pow(Re_y[nv-1][j].e,2.)))/(1.+(0.05*pow(Re_y[nv-1][j].e,2.)));
-		beta_y[nv-1][j].w = (1.+(0.005*pow(Re_y[nv-1][j].w,2.)))/(1.+(0.05*pow(Re_y[nv-1][j].w,2.)));
-		beta_y[nv-1][j].n = (1.+(0.005*pow(Re_y[nv-1][j].n,2.)))/(1.+(0.05*pow(Re_y[nv-1][j].n,2.)));
-		beta_y[nv-1][j].s = (1.+(0.005*pow(Re_y[nv-1][j].s,2.)))/(1.+(0.05*pow(Re_y[nv-1][j].s,2.)));
-			
-		if(Re_y[nv-1][j].e < 0) { alpha_y[nv-1][j].e = -alpha_y[nv-1][j].e; }
-		if(Re_y[nv-1][j].w < 0) { alpha_y[nv-1][j].w = -alpha_y[nv-1][j].w; }
-		if(Re_y[nv-1][j].n < 0) { alpha_y[nv-1][j].n = -alpha_y[nv-1][j].n; }
-		if(Re_y[nv-1][j].s < 0) { alpha_y[nv-1][j].s = -alpha_y[nv-1][j].s; }
-		
 		As_v[nv-1][j] = (((mi*beta_y[nv-1][j].s*dx)/dy)+((rho*((v[nv-1][j-1]+v[nv-1][j])/2.)*dx)*(0.5+alpha_y[nv-1][j].s)));
 		An_v[nv-1][j] = (((mi*beta_y[nv-1][j].n*dx)/dy)-((rho*((v[nv-1][j+1]+v[nv-1][j])/2.)*dx)*(0.5-alpha_y[nv-1][j].n)));
 		Ae_v[nv-1][j] = ((2.*mi*beta_y[nv-1][j].e*dy)/dx);
@@ -512,24 +223,6 @@ void Calc_Coef_NS_Y()
 	// West boundary volumes
 	for(int j=1;j<(nv-2);j++)
 	{
-		Re_y[0][j].e = (rho*((u[0][j]+u[0][j+1])/2.)*dy)/mi;
-		Re_y[0][j].n = (rho*((v[0][j]+v[0][j+1])/2.)*dy)/mi;
-		Re_y[0][j].w = 0.;
-		Re_y[0][j].s = (rho*((v[0][j]+v[0][j-1])/2.)*dy)/mi;
-		alpha_y[0][j].e = pow(Re_y[0][j].e,2.)/(10.+2.*pow(Re_y[0][j].e,2.));
-		alpha_y[0][j].w = pow(Re_y[0][j].w,2.)/(10.+2.*pow(Re_y[0][j].w,2.));
-		alpha_y[0][j].n = pow(Re_y[0][j].n,2.)/(10.+2.*pow(Re_y[0][j].n,2.));
-		alpha_y[0][j].s = pow(Re_y[0][j].s,2.)/(10.+2.*pow(Re_y[0][j].s,2.));
-		beta_y[0][j].e = (1.+(0.005*pow(Re_y[0][j].e,2.)))/(1.+(0.05*pow(Re_y[0][j].e,2.)));
-		beta_y[0][j].w = (1.+(0.005*pow(Re_y[0][j].w,2.)))/(1.+(0.05*pow(Re_y[0][j].w,2.)));
-		beta_y[0][j].n = (1.+(0.005*pow(Re_y[0][j].n,2.)))/(1.+(0.05*pow(Re_y[0][j].n,2.)));
-		beta_y[0][j].s = (1.+(0.005*pow(Re_y[0][j].s,2.)))/(1.+(0.05*pow(Re_y[0][j].s,2.)));
-		
-		if(Re_y[0][j].e < 0) { alpha_y[0][j].e = -alpha_y[0][j].e; }
-		if(Re_y[0][j].w < 0) { alpha_y[0][j].w = -alpha_y[0][j].w; }
-		if(Re_y[0][j].n < 0) { alpha_y[0][j].n = -alpha_y[0][j].n; }
-		if(Re_y[0][j].s < 0) { alpha_y[0][j].s = -alpha_y[0][j].s; }		
-	
 		As_v[0][j] = (((mi*beta_y[0][j].s*dx)/dy)+((rho*((v[0][j-1]+v[0][j])/2.)*dx)*(0.5+alpha_y[0][j].s)));
 		An_v[0][j] = (((mi*beta_y[0][j].n*dx)/dy)-((rho*((v[0][j+1]+v[0][j])/2.)*dx)*(0.5-alpha_y[0][j].n)));
 		Ae_v[0][j] = (((mi*beta_y[0][j].e*dy)/dx)-((rho*((u[0][j+1]+u[0][j])/2.)*dy)*(0.5-alpha_y[0][j].e)));
@@ -542,24 +235,6 @@ void Calc_Coef_NS_Y()
 	{
 		for(int j=1;j<(nv-2);j++)
 		{
-			Re_y[i][j].e = (rho*((u[i][j]+u[i][j+1])/2.)*dy)/mi;
-			Re_y[i][j].n = (rho*((v[i][j+1]+v[i][j])/2.)*dy)/mi;
-			Re_y[i][j].w = (rho*((u[i-1][j]+u[i-1][j+1])/2.)*dy)/mi;
-			Re_y[i][j].s = (rho*((v[i][j-1]+v[i][j])/2.)*dy)/mi;
-			alpha_y[i][j].e = pow(Re_y[i][j].e,2.)/(10.+2.*pow(Re_y[i][j].e,2.));
-			alpha_y[i][j].w = pow(Re_y[i][j].w,2.)/(10.+2.*pow(Re_y[i][j].w,2.));
-			alpha_y[i][j].n = pow(Re_y[i][j].n,2.)/(10.+2.*pow(Re_y[i][j].n,2.));
-			alpha_y[i][j].s = pow(Re_y[i][j].s,2.)/(10.+2.*pow(Re_y[i][j].s,2.));
-			beta_y[i][j].e = (1.+(0.005*pow(Re_y[i][j].e,2.)))/(1.+(0.05*pow(Re_y[i][j].e,2.)));
-			beta_y[i][j].w = (1.+(0.005*pow(Re_y[i][j].w,2.)))/(1.+(0.05*pow(Re_y[i][j].w,2.)));
-			beta_y[i][j].n = (1.+(0.005*pow(Re_y[i][j].n,2.)))/(1.+(0.05*pow(Re_y[i][j].n,2.)));
-			beta_y[i][j].s = (1.+(0.005*pow(Re_y[i][j].s,2.)))/(1.+(0.05*pow(Re_y[i][j].s,2.)));
-			
-			if(Re_y[i][j].e < 0) { alpha_y[i][j].e = -alpha_y[i][j].e; }
-			if(Re_y[i][j].w < 0) { alpha_y[i][j].w = -alpha_y[i][j].w; }
-			if(Re_y[i][j].n < 0) { alpha_y[i][j].n = -alpha_y[i][j].n; }
-			if(Re_y[i][j].s < 0) { alpha_y[i][j].s = -alpha_y[i][j].s; }
-			
 			As_v[i][j] = (((mi*beta_y[i][j].s*dx)/dy)+((rho*((v[i][j-1]+v[i][j])/2.)*dx)*(0.5+alpha_y[i][j].s)));
 			An_v[i][j] = (((mi*beta_y[i][j].n*dx)/dy)-((rho*((v[i][j+1]+v[i][j])/2.)*dx)*(0.5-alpha_y[i][j].n)));
 			Ae_v[i][j] = (((mi*beta_y[i][j].e*dy)/dx)-((rho*((u[i][j+1]+u[i][j])/2.)*dy)*(0.5-alpha_y[i][j].e)));
@@ -744,7 +419,7 @@ void Calc_Coef_Pressao()
 	}
 }
 
-void Correcao_u_v()
+void correct_u_v()
 {
 	// Correct x-velocity u
 	for(int i=0;i<(nv-1);i++)
@@ -817,7 +492,6 @@ int main()
 	allocate_vector_2d(As_u , n_x-1, n_y);
 	allocate_vector_2d(B_u  , n_x-1, n_y);
 
-	allocate_cvbound_2d(Re_x   , n_x-1, n_y);
 	allocate_cvbound_2d(alpha_x, n_x-1, n_y);
 	allocate_cvbound_2d(beta_x , n_x-1, n_y);
 
@@ -831,7 +505,6 @@ int main()
 	allocate_vector_2d(As_v , n_x, n_y-1);
 	allocate_vector_2d(B_v  , n_x, n_y-1);
 
-	allocate_cvbound_2d(Re_y   , n_x, n_y-1);
 	allocate_cvbound_2d(alpha_y, n_x, n_y-1);
 	allocate_cvbound_2d(beta_y , n_x, n_y-1);
 
@@ -852,7 +525,9 @@ int main()
 	{
 		IT++;
 		cout << IT << " ";
+		Calc_WUDS_Coef_X(rho, mi, nv, dx, dy, u, v, alpha_x, beta_x);
 		Calc_Coef_NS_X(); 
+		Calc_WUDS_Coef_Y(rho, mi, nv, dx, dy, u, v, alpha_y, beta_y);
 		Calc_Coef_NS_Y();
 		Calc_u_hat();
 		Calc_v_hat();
@@ -861,7 +536,7 @@ int main()
 			P, Pn, B_p, 
 			nv, 50, 1.6
 		);	
-		Correcao_u_v();
+		correct_u_v();
 		cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 		if((IT % 500) == 0)
 		{
@@ -875,7 +550,9 @@ int main()
 	}
 	IT++;
 	cout << IT << " ";
+	Calc_WUDS_Coef_X(rho, mi, nv, dx, dy, u, v, alpha_x, beta_x);
 	Calc_Coef_NS_X(); 
+	Calc_WUDS_Coef_Y(rho, mi, nv, dx, dy, u, v, alpha_y, beta_y);
 	Calc_Coef_NS_Y();
 	Calc_u_hat();
 	Calc_v_hat();
@@ -884,7 +561,7 @@ int main()
 			P, Pn, B_p, 
 			nv, 1000, 1.6
 		);	
-	Correcao_u_v();
+	correct_u_v();
 	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
 	save_results(filename_results, u, v, Pn, nv, dx, dy, U);
 
@@ -898,7 +575,6 @@ int main()
 	deallocate_vector_2d(As_u , n_x-1, n_y);
 	deallocate_vector_2d(B_u  , n_x-1, n_y);
 
-	deallocate_cvbound_2d(Re_x   , n_x-1, n_y);
 	deallocate_cvbound_2d(alpha_x, n_x-1, n_y);
 	deallocate_cvbound_2d(beta_x , n_x-1, n_y);
 
@@ -912,7 +588,6 @@ int main()
 	deallocate_vector_2d(As_v , n_x, n_y-1);
 	deallocate_vector_2d(B_v  , n_x, n_y-1);
 
-	deallocate_cvbound_2d(Re_y   , n_x, n_y-1);
 	deallocate_cvbound_2d(alpha_y, n_x, n_y-1);
 	deallocate_cvbound_2d(beta_y , n_x, n_y-1);
 
