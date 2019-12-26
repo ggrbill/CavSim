@@ -6,6 +6,8 @@ add_library(${PROJECT_NAME}
             Cavity.hpp
             Legacy/solver.cpp
             Legacy/solver.hpp
+            Legacy/numeric.cpp
+            Legacy/numeric.hpp
             Legacy/IO.cpp
             Legacy/IO.hpp
             Legacy/Structures.cpp

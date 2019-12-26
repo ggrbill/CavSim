@@ -8,6 +8,7 @@
 
 #include "Legacy/solver.hpp"
 #include "Legacy/IO.hpp"
+#include "Legacy/numeric.hpp"
 #include "Legacy/Structures.hpp"
 #include "Legacy/WUDS.hpp"
 
@@ -441,33 +442,6 @@ void correct_u_v()
 	}
 }
 
-double Erro_u()
-{
-	double erro = 0.;
-	for(int i=0;i<(nv-1);i++)
-	{
-		for(int j=0;j<nv;j++)
-		{
-			erro += pow((u[i][j] - uOLD[i][j]),2.);
-		}
-	}
-	erro = sqrt(erro);
-	return erro;
-}
-double Erro_v()
-{	
-	double erro = 0.;
-	for(int i=0;i<nv;i++)
-	{
-		for(int j=0;j<(nv-1);j++)
-		{
-			erro += pow((v[i][j] - vOLD[i][j]),2.);
-		}
-	}
-	erro = sqrt(erro);
-	return erro;	
-}
-
 int main()
 {
 	std:: string filename_input = "./inCav.txt";
@@ -519,8 +493,6 @@ int main()
 
 	int IT = 0;
 	int TESTE =0;
-	double eu = 0.;
-	double ev = 0.;
 	while ( TESTE == 0 )
 	{
 		IT++;
@@ -532,18 +504,23 @@ int main()
 		Calc_u_hat();
 		Calc_v_hat();
 		Calc_Coef_Pressao();
-		SOR_structured(Ap_p, Aw_p, Ae_p, An_p, As_p, 
+		SOR_structured(
+			Ap_p, Aw_p, Ae_p, An_p, As_p,
 			P, Pn, B_p, 
 			nv, 50, 1.6
 		);	
 		correct_u_v();
-		cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
+
+		double error_u = calculate_vec_diff_L2_norm(u, uOLD, n_x-1, n_y);
+		double error_v = calculate_vec_diff_L2_norm(v, vOLD, n_x, n_y-1);
+		cout <<"error -u:" << setw(7) << setprecision(5) << error_u
+			 << " -v:" << setw(7) << setprecision(5) << error_v << endl;
 		if((IT % 500) == 0)
 		{
 			cout << endl << "......Saving Partial Solution....." << endl;
 			save_results(filename_results, u, v, Pn, nv, dx, dy, U);
 		}
-		if( ((Erro_u() < (0.0001)) and ( Erro_v() < (0.0001) )) or (IT == 100000) )
+		if( ( (error_u < (0.0001)) and (error_v < (0.0001) )) or (IT == 100000) )
 		{
 			TESTE = 1;
 		}
@@ -557,12 +534,17 @@ int main()
 	Calc_u_hat();
 	Calc_v_hat();
 	Calc_Coef_Pressao();
-	SOR_structured(Ap_p, Aw_p, Ae_p, An_p, As_p, 
-			P, Pn, B_p, 
-			nv, 1000, 1.6
-		);	
+	SOR_structured(
+		Ap_p, Aw_p, Ae_p, An_p, As_p,
+		P, Pn, B_p,
+		nv, 1000, 1.6
+	);
 	correct_u_v();
-	cout <<"erro-u:" << setw(7) << setprecision(5) << Erro_u() << " -v:" << setw(7) << setprecision(5) << Erro_u() << endl;
+
+	double error_u = calculate_vec_diff_L2_norm(u, uOLD, n_x-1, n_y);
+	double error_v = calculate_vec_diff_L2_norm(v, vOLD, n_x, n_y-1);
+	cout << "error -u:" << setw(7) << setprecision(5) << error_u
+		 << " -v:" << setw(7) << setprecision(5) << error_v << endl;
 	save_results(filename_results, u, v, Pn, nv, dx, dy, U);
 
 	deallocate_vector_2d(u    , n_x-1, n_y);
