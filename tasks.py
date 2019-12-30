@@ -65,7 +65,8 @@ def clean(ctx):
 
 @task(
 	help = {
-		'cclean': "Call 'clean' task (Delete 'build' and 'artifacts' folders) before build again."
+		'cclean': "Call 'clean' task (Delete 'build' and 'artifacts' folders) before build again.",
+		'sys': "The build system can be 'makefile' or 'ninja'(default).",
 	}
 )
 def build(ctx, cclean=False, sys='ninja'):
