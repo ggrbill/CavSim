@@ -8,8 +8,10 @@ class colors:
 	WHITE = '\033[37m'
 	RESET = '\033[0;0m'
 
+
 def print_color(color, msg):
 	print(color + msg + colors.RESET)
+
 
 def get_project_name_and_folder():
     """
@@ -28,14 +30,29 @@ def get_project_name_and_folder():
         assert len(directory) != 0
 
 
+def check_option(option, option_list):
+    """
+    :return: Return True if an option is valid in a given option list
+    """
+    if option not in option_list:
+        print_color(colors.YELLOW, f' The option \'{option}\' is not valid. It should be one of {option_list}.')
+        return False
+
+    return True
+
+
 @task()
 def clean(ctx):
 	"""
 	Delete 'build' and 'artifacts' folders.
 	"""
-	project_name, project_pwd = get_project_name_and_folder()
-	ctx.run('cd ' + project_pwd)
+	current_dir = os.path.abspath(os.curdir)
+	if 'build' in current_dir or 'artifacts' in current_dir:
+		print_color(colors.YELLOW, 'Impossible to delete build or artifacts folder. Your current directory is one of them.')
+		return
 
+	project_name, project_pwd = get_project_name_and_folder()
+	
 	print_color(colors.GREEN, ">>> Cleaning! <<<")
 	commands = [
 		'cd ' + project_pwd,
@@ -51,39 +68,56 @@ def clean(ctx):
 		'cclean': "Call 'clean' task (Delete 'build' and 'artifacts' folders) before build again."
 	}
 )
-def build(ctx, cclean=False):
+def build(ctx, cclean=False, sys='ninja'):
 	"""
 	Build C++ code and install the artifacts.
 	"""
+	if not check_option(sys, ['makefile', 'ninja']):
+		return
+
+	sys_build = {
+		'makefile' : {
+			'Generate' : '-G"Unix Makefiles"',
+			'Install' : 'make install',
+		},
+		'ninja' : {
+			'Generate' : '-G"Ninja"',
+			'Install' : 'ninja install',
+		},
+	}
+
 	project_name, project_pwd = get_project_name_and_folder()
 
 	if cclean:
 		clean(ctx)
 	
-	build_folder = project_pwd + '/build' 
+	build_folder = project_pwd + '/build/'
 	build_folder_exists = os.path.isdir(build_folder) and os.path.exists(build_folder)
+	
+	sys_build_folder = project_pwd + '/build/_' + sys
+	sys_build_folder_exists = os.path.isdir(sys_build_folder) and os.path.exists(sys_build_folder)
 
 	build_commands = [
 		'cd ' + project_pwd,
 		'mkdir build',
 		'cd build',
-		'mkdir makefiles',
-		'cd makefiles',
-		'cmake ../..',
+		'mkdir _' + sys,
+		'cd _' + sys,
+		'cmake ' + sys_build[sys]['Generate'] + ' ../..',
 		'cmake --build .',
 	]
 	if build_folder_exists:
 		build_commands.remove('mkdir build')
-		build_commands.remove('mkdir makefiles')
-
+	if sys_build_folder_exists:
+		build_commands.remove('mkdir _' + sys)
 	print_color(colors.BLUE, ">>> Building! <<<" )
 	ctx.run(' && '.join(build_commands))
-
+	
 	install_commands = [
 		'cd ' + project_pwd,
 		'cd build',
-		'cd makefiles',
-		'make install',
+		'cd _' + sys,
+		sys_build[sys]['Install']
 	]
 	print_color(colors.BLUE, ">>> Installing! <<<" )
 	ctx.run(' && '.join(install_commands))
