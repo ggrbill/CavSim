@@ -16,12 +16,12 @@ void SOR_structured(
     int const MAX_IT, 
     float const w, // relaxation factor
     double const tol // convergence tolerance
-) {
+)
+{
     std::cout << "Solve Pressure ";
     int N_ITE = 0;
-    bool iterate = true;
     double T = 0.0;
-    while(iterate) {
+    while(true) {
         N_ITE++;   
         T = 0.0;
         for(int i=0; i<size; i++)
@@ -104,7 +104,7 @@ void SOR_structured(
         T = sqrt(T);
         if ( (T < (tol)) or (N_ITE == MAX_IT) )
         {
-            iterate = false;
+            break;
         }	
     }
     std::cout << N_ITE << " Iterations ";

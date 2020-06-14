@@ -491,11 +491,11 @@ int main()
 	allocate_vector_2d(As_p, n_x, n_y);
 	allocate_vector_2d(B_p , n_x, n_y);
 
-	int IT = 0;
-	int TESTE =0;
-	while ( TESTE == 0 )
+	double tol = 1.e-4;
+	int MAX_IT = 100000;
+	int IT = 1;
+	while (true)
 	{
-		IT++;
 		cout << IT << " ";
 		Calc_WUDS_Coef_X(rho, mi, nv, dx, dy, u, v, alpha_x, beta_x);
 		Calc_Coef_NS_X(); 
@@ -520,31 +520,12 @@ int main()
 			cout << endl << "......Saving Partial Solution....." << endl;
 			save_results(filename_results, u, v, Pn, nv, dx, dy, U);
 		}
-		if( ( (error_u < (0.0001)) and (error_v < (0.0001) )) or (IT == 100000) )
+		IT++;
+		if( ( (error_u <= (tol)) and (error_v <= (tol) )) or (IT >= MAX_IT + 1) )
 		{
-			TESTE = 1;
+			break;
 		}
 	}
-	IT++;
-	cout << IT << " ";
-	Calc_WUDS_Coef_X(rho, mi, nv, dx, dy, u, v, alpha_x, beta_x);
-	Calc_Coef_NS_X(); 
-	Calc_WUDS_Coef_Y(rho, mi, nv, dx, dy, u, v, alpha_y, beta_y);
-	Calc_Coef_NS_Y();
-	Calc_u_hat();
-	Calc_v_hat();
-	Calc_Coef_Pressao();
-	SOR_structured(
-		Ap_p, Aw_p, Ae_p, An_p, As_p,
-		P, Pn, B_p,
-		nv, 1000, 1.6
-	);
-	correct_u_v();
-
-	double error_u = calculate_vec_diff_L2_norm(u, uOLD, n_x-1, n_y);
-	double error_v = calculate_vec_diff_L2_norm(v, vOLD, n_x, n_y-1);
-	cout << "error -u:" << setw(7) << setprecision(5) << error_u
-		 << " -v:" << setw(7) << setprecision(5) << error_v << endl;
 	save_results(filename_results, u, v, Pn, nv, dx, dy, U);
 
 	deallocate_vector_2d(u    , n_x-1, n_y);
