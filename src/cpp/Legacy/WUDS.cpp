@@ -2,7 +2,7 @@
 
 #include "WUDS.hpp"
 
-void Calc_WUDS_Coef_X(
+void calculate_WUDS_coefficients_X(
     double rho,
     double mi,
     int nv,
@@ -206,7 +206,7 @@ void Calc_WUDS_Coef_X(
 	}
 }
 
-void Calc_WUDS_Coef_Y(
+void calculate_WUDS_coefficients_Y(
     double rho,
     double mi,
     int nv,

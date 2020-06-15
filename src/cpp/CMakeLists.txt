@@ -13,7 +13,9 @@ add_library(${PROJECT_NAME}
             Legacy/Structures.cpp
             Legacy/Structures.hpp
             Legacy/WUDS.cpp
-            Legacy/WUDS.hpp)
+            Legacy/WUDS.hpp
+            Legacy/PRIMEcorrection.cpp
+            Legacy/PRIMEcorrection.hpp)
 
 add_executable (${PROJECT_NAME}Old main.cpp)
 

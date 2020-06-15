@@ -10,7 +10,7 @@
     Diffusive terms of Discrete Navier-Stokes Equation in respect 
     to the X-axis.  
 */
-void Calc_WUDS_Coef_X(
+void calculate_WUDS_coefficients_X(
     double rho,
     double mi,
     int nv,
@@ -28,7 +28,7 @@ void Calc_WUDS_Coef_X(
     Diffusive terms of Discrete Navier-Stokes Equation in respect 
     to the Y-axis.  
 */
-void Calc_WUDS_Coef_Y(
+void calculate_WUDS_coefficients_Y(
     double rho,
     double mi,
     int nv,
