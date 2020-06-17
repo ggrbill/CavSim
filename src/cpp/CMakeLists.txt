@@ -17,7 +17,9 @@ add_library(${PROJECT_NAME}
             Legacy/PRIMEcorrection.cpp
             Legacy/PRIMEcorrection.hpp
             Legacy/MassEquation.cpp
-            Legacy/MassEquation.hpp)
+            Legacy/MassEquation.hpp
+            Legacy/MomentumEquation.cpp
+            Legacy/MomentumEquation.hpp)
 
 add_executable (${PROJECT_NAME}Old main.cpp)
 
