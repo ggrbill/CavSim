@@ -15,7 +15,9 @@ add_library(${PROJECT_NAME}
             Legacy/WUDS.cpp
             Legacy/WUDS.hpp
             Legacy/PRIMEcorrection.cpp
-            Legacy/PRIMEcorrection.hpp)
+            Legacy/PRIMEcorrection.hpp
+            Legacy/MassEquation.cpp
+            Legacy/MassEquation.hpp)
 
 add_executable (${PROJECT_NAME}Old main.cpp)
 
