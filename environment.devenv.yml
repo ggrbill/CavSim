@@ -4,6 +4,7 @@ channels:
 - conda-forge
 dependencies:
 - python=3.7.3
+- pytest=5.4.3
 - invoke=1.4.1
 - cmake>=3.14
 - ninja=1.9

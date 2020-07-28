@@ -3,3 +3,4 @@ environment.yml
 build/
 artifacts/
 .vscode/
+src/python/_tests/__pycache__
