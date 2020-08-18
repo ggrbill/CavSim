@@ -52,11 +52,12 @@ def clean(ctx):
 		return
 
 	project_name, project_pwd = get_project_name_and_folder()
-	
+
 	print_color(colors.GREEN, ">>> Cleaning! <<<")
 	commands = [
 		'cd ' + project_pwd,
-		'rm -Rf build',
+		'rm -Rf build/_ninja',
+		'rm -Rf build/_makefile',
 		'rm -Rf artifacts',
 	]
 	ctx.run(' && '.join(commands))
