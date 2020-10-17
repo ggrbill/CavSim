@@ -6,14 +6,14 @@
 #include <iomanip>
 #include <math.h>
 
-#include "Legacy/solver.hpp"
-#include "Legacy/IO.hpp"
-#include "Legacy/numeric.hpp"
-#include "Legacy/Structures.hpp"
-#include "Legacy/WUDS.hpp"
-#include "Legacy/PRIMEcorrection.hpp"
-#include "Legacy/MassEquation.hpp"
-#include "Legacy/MomentumEquation.hpp"
+#include "classic/solver.hpp"
+#include "classic/IO.hpp"
+#include "classic/numeric.hpp"
+#include "classic/Structures.hpp"
+#include "classic/WUDS.hpp"
+#include "classic/PRIMEcorrection.hpp"
+#include "classic/MassEquation.hpp"
+#include "classic/MomentumEquation.hpp"
 
 using namespace std;
 
