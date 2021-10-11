@@ -8,7 +8,7 @@ on:
 
 jobs:
   
-  test:
+  build-linux:
     runs-on: ubuntu-latest
     
     steps:
@@ -20,7 +20,7 @@ jobs:
     - name: Create and Activate Conda Environment
       run: |
         conda devenv
-        conda activate CavSim
+        source activate CavSim
     
     - name: Build
       run: inv build
