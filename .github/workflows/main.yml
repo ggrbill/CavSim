@@ -1,0 +1,37 @@
+name: CavSim
+
+on: 
+  push: 
+    branches: [master]
+
+  pull_request:
+
+jobs:
+  
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Install conda-devenv
+      run: conda install conda-devenv -c conda-forge
+    
+    - name: Create Conda Environment
+      run: |
+        conda devenv
+    
+    - name: Build
+      run: |
+        source $CONDA/bin/activate CavSim
+        inv build
+
+    - name: Test
+      run: |
+        source $CONDA/bin/activate CavSim
+        pytest
+
+    - name: Run example case
+      run: |
+        source $CONDA/bin/activate CavSim
+        inv run-case-ex
