@@ -17,16 +17,20 @@ jobs:
     - name: Install conda-devenv
       run: conda install conda-devenv -c conda-forge
     
-    - name: Create and Activate Conda Environment
+    - name: Create Conda Environment
       run: |
         conda devenv
         source $CONDA/bin/activate CavSim
     
     - name: Build
-      run: inv build
+      run: |
+        source $CONDA/bin/activate CavSim
+        inv build
 
     - name: Test
       run: pytest
 
     - name: Run example case
-      run: inv run-case-ex
+      run: |
+        source $CONDA/bin/activate CavSim
+        inv run-case-ex
