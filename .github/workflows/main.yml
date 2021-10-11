@@ -10,6 +10,9 @@ jobs:
   
   build-linux:
     runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -l {0}
     
     steps:
     - uses: actions/checkout@v2
@@ -20,18 +23,13 @@ jobs:
     - name: Create Conda Environment
       run: |
         conda devenv
+        source $CONDA/bin/activate CavSim
     
     - name: Build
-      run: |
-        source $CONDA/bin/activate CavSim
-        inv build
+      run: inv build
 
     - name: Test
-      run: |
-        source $CONDA/bin/activate CavSim
-        pytest
+      run: pytest
 
     - name: Run example case
-      run: |
-        source $CONDA/bin/activate CavSim
-        inv run-case-ex
+      run: inv run-case-ex
