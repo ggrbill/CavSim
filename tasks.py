@@ -83,7 +83,7 @@ def build(ctx, cclean=False, sys='ninja'):
 			'Install' : 'make install',
 		},
 		'ninja' : {
-			'Generate' : '-G"Ninja"',
+			'Generate' : '-G"Ninja" -DCMAKE_BUILD_WITH_INSTALL_RPATH=ON',
 			'Install' : 'ninja install',
 		},
 	}
