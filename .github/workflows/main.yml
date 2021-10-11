@@ -15,7 +15,7 @@ jobs:
     - uses: actions/checkout@v2
 
     - name: Install conda-devenv
-      run: conda install conda-devenv
+      run: conda install conda-devenv -c conda-forge
     
     - name: Create and Activate Conda Environment
       run: |
