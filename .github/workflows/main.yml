@@ -20,7 +20,7 @@ jobs:
     - name: Create and Activate Conda Environment
       run: |
         conda devenv
-        source activate CavSim
+        $CONDA/bin/activate CavSim
     
     - name: Build
       run: inv build
