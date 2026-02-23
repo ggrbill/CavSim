@@ -13,7 +13,7 @@
 version: 1
 metadata:
   content_hash:
-    linux-64: 011bb4d854f951029417028aa919f01df815cd6193a17c0fb62a81cee4caa7e3
+    linux-64: ee98fbd882c98ab4aef8ab89139361534eb593deca12110d9af84e91e23b377f
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -35,6 +35,44 @@ package:
   hash:
     md5: a9f577daf3de00bca7c3c76c0ecbd1de
     sha256: 1dd3fffd892081df9726d7eb7e0dea6198962ba775bd88842135a4ddb4deb3c9
+  category: main
+  optional: false
+- name: binutils
+  version: 2.45.1
+  manager: conda
+  platform: linux-64
+  dependencies:
+    binutils_impl_linux-64: '>=2.45.1,<2.45.2.0a0'
+  url: https://conda.anaconda.org/conda-forge/linux-64/binutils-2.45.1-default_h4852527_101.conda
+  hash:
+    md5: 9902aeb08445c03fb31e01beeb173988
+    sha256: 2851d34944b056d028543f0440fb631aeeff204151ea09589d8d9c13882395de
+  category: main
+  optional: false
+- name: binutils_impl_linux-64
+  version: 2.45.1
+  manager: conda
+  platform: linux-64
+  dependencies:
+    ld_impl_linux-64: 2.45.1
+    sysroot_linux-64: ''
+    zstd: '>=1.5.7,<1.6.0a0'
+  url: https://conda.anaconda.org/conda-forge/linux-64/binutils_impl_linux-64-2.45.1-default_hfdba357_101.conda
+  hash:
+    md5: 83aa53cb3f5fc849851a84d777a60551
+    sha256: 74341b26a2b9475dc14ba3cf12432fcd10a23af285101883e720216d81d44676
+  category: main
+  optional: false
+- name: binutils_linux-64
+  version: 2.45.1
+  manager: conda
+  platform: linux-64
+  dependencies:
+    binutils_impl_linux-64: 2.45.1
+  url: https://conda.anaconda.org/conda-forge/linux-64/binutils_linux-64-2.45.1-default_h4852527_101.conda
+  hash:
+    md5: dec96579f9a7035a59492bf6ee613b53
+    sha256: 4826f97d33cbe54459970a1e84500dbe0cccf8326aaf370e707372ae20ec5a47
   category: main
   optional: false
 - name: bzip2
@@ -61,6 +99,20 @@ package:
   hash:
     md5: 920bb03579f15389b9e512095ad995b7
     sha256: cc9accf72fa028d31c2a038460787751127317dcfa991f8d1f1babf216bb454e
+  category: main
+  optional: false
+- name: c-compiler
+  version: 1.11.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    binutils: ''
+    gcc: ''
+    gcc_linux-64: 14.*
+  url: https://conda.anaconda.org/conda-forge/linux-64/c-compiler-1.11.0-h4d9bdce_0.conda
+  hash:
+    md5: abd85120de1187b0d1ec305c2173c71b
+    sha256: 8e7a40f16400d7839c82581410aa05c1f8324a693c9d50079f8c50dc9fb241f0
   category: main
   optional: false
 - name: ca-certificates
@@ -110,6 +162,32 @@ package:
     sha256: ab29d57dc70786c1269633ba3dff20288b81664d3ff8d21af995742e2bb03287
   category: main
   optional: false
+- name: conda-gcc-specs
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    gcc_impl_linux-64: '>=14.3.0,<14.3.1.0a0'
+  url: https://conda.anaconda.org/conda-forge/linux-64/conda-gcc-specs-14.3.0-he8ccf15_18.conda
+  hash:
+    md5: 0e3e144115c43c9150d18fa20db5f31c
+    sha256: b90ec0e6a9eb22f7240b3584fe785457cff961fec68d40e6aece5d596f9bbd9a
+  category: main
+  optional: false
+- name: cxx-compiler
+  version: 1.11.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    c-compiler: 1.11.0
+    gxx: ''
+    gxx_linux-64: 14.*
+  url: https://conda.anaconda.org/conda-forge/linux-64/cxx-compiler-1.11.0-hfcd1e18_0.conda
+  hash:
+    md5: 5da8c935dca9186673987f79cef0b2a5
+    sha256: 3fcc97ae3e89c150401a50a4de58794ffc67b1ed0e1851468fcc376980201e25
+  category: main
+  optional: false
 - name: exceptiongroup
   version: 1.3.1
   manager: conda
@@ -121,6 +199,95 @@ package:
   hash:
     md5: 8e662bd460bda79b1ea39194e3c4c9ab
     sha256: ee6cf346d017d954255bbcbdb424cddea4d14e4ed7e9813e429db1d795d01144
+  category: main
+  optional: false
+- name: gcc
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    conda-gcc-specs: ''
+    gcc_impl_linux-64: 14.3.0
+  url: https://conda.anaconda.org/conda-forge/linux-64/gcc-14.3.0-h0dff253_18.conda
+  hash:
+    md5: 52d6457abc42e320787ada5f9033fa99
+    sha256: 9b34b57b06b485e33a40d430f71ac88c8f381673592507cf7161c50ff0832772
+  category: main
+  optional: false
+- name: gcc_impl_linux-64
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    binutils_impl_linux-64: '>=2.45'
+    libgcc: '>=14.3.0'
+    libgcc-devel_linux-64: 14.3.0
+    libgomp: '>=14.3.0'
+    libsanitizer: 14.3.0
+    libstdcxx: '>=14.3.0'
+    libstdcxx-devel_linux-64: 14.3.0
+    sysroot_linux-64: ''
+  url: https://conda.anaconda.org/conda-forge/linux-64/gcc_impl_linux-64-14.3.0-hbdf3cc3_18.conda
+  hash:
+    md5: 30bb690150536f622873758b0e8d6712
+    sha256: 3b31a273b806c6851e16e9cf63ef87cae28d19be0df148433f3948e7da795592
+  category: main
+  optional: false
+- name: gcc_linux-64
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    binutils_linux-64: ''
+    gcc_impl_linux-64: 14.3.0.*
+    sysroot_linux-64: ''
+  url: https://conda.anaconda.org/conda-forge/linux-64/gcc_linux-64-14.3.0-h298d278_21.conda
+  hash:
+    md5: 1403ed5fe091bd7442e4e8a229d14030
+    sha256: 27ad0cd10dccffca74e20fb38c9f8643ff8fce56eee260bf89fa257d5ab0c90a
+  category: main
+  optional: false
+- name: gxx
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    gcc: 14.3.0
+    gxx_impl_linux-64: 14.3.0
+  url: https://conda.anaconda.org/conda-forge/linux-64/gxx-14.3.0-h76987e4_18.conda
+  hash:
+    md5: 19189121d644d4ef75fed05383bc75f5
+    sha256: 1b490c9be9669f9c559db7b2a1f7d8b973c58ca0c6f21a5d2ba3f0ab2da63362
+  category: main
+  optional: false
+- name: gxx_impl_linux-64
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    gcc_impl_linux-64: 14.3.0
+    libstdcxx-devel_linux-64: 14.3.0
+    sysroot_linux-64: ''
+    tzdata: ''
+  url: https://conda.anaconda.org/conda-forge/linux-64/gxx_impl_linux-64-14.3.0-h2185e75_18.conda
+  hash:
+    md5: 6514b3a10e84b6a849e1b15d3753eb22
+    sha256: 38ffca57cc9c264d461ac2ce9464a9d605e0f606d92d831de9075cb0d95fc68a
+  category: main
+  optional: false
+- name: gxx_linux-64
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    binutils_linux-64: ''
+    gcc_linux-64: ==14.3.0
+    gxx_impl_linux-64: 14.3.0.*
+    sysroot_linux-64: ''
+  url: https://conda.anaconda.org/conda-forge/linux-64/gxx_linux-64-14.3.0-h033eb0a_21.conda
+  hash:
+    md5: 6d74b73ab992940a79260c65e7685fcb
+    sha256: 48c31cd95b54a4363873827fcfc4f3670fedefebca868f48085a00085f5a8ab5
   category: main
   optional: false
 - name: icu
@@ -159,6 +326,17 @@ package:
   hash:
     md5: 3a804714ed59be1969ffca10f703ec2a
     sha256: 5a4e3a01f626c8de15ddada622d364e94ff28e8d6bdedf1665442ef03a4e0140
+  category: main
+  optional: false
+- name: kernel-headers_linux-64
+  version: 4.18.0
+  manager: conda
+  platform: linux-64
+  dependencies: {}
+  url: https://conda.anaconda.org/conda-forge/noarch/kernel-headers_linux-64-4.18.0-he073ed8_9.conda
+  hash:
+    md5: 86d9cba083cd041bfbf242a01a7a1999
+    sha256: 41557eeadf641de6aeae49486cef30d02a6912d8da98585d687894afd65b356a
   category: main
   optional: false
 - name: keyutils
@@ -288,6 +466,18 @@ package:
     sha256: faf7d2017b4d718951e3a59d081eb09759152f93038479b768e3d612688f83f5
   category: main
   optional: false
+- name: libgcc-devel_linux-64
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    __unix: ''
+  url: https://conda.anaconda.org/conda-forge/noarch/libgcc-devel_linux-64-14.3.0-hf649bbc_118.conda
+  hash:
+    md5: 06901733131833f5edd68cf3d9679798
+    sha256: 1abc6a81ee66e8ac9ac09a26e2d6ad7bba23f0a0cc3a6118654f036f9c0e1854
+  category: main
+  optional: false
 - name: libgcc-ng
   version: 15.2.0
   manager: conda
@@ -356,6 +546,20 @@ package:
     sha256: a4a7dab8db4dc81c736e9a9b42bdfd97b087816e029e221380511960ac46c690
   category: main
   optional: false
+- name: libsanitizer
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    __glibc: '>=2.17,<3.0.a0'
+    libgcc: '>=14.3.0'
+    libstdcxx: '>=14.3.0'
+  url: https://conda.anaconda.org/conda-forge/linux-64/libsanitizer-14.3.0-h8f1669f_18.conda
+  hash:
+    md5: ad3a0e2dc4cce549b2860e2ef0e6d75b
+    sha256: e03ed186eefb46d7800224ad34bad1268c9d19ecb8f621380a50601c6221a4a7
+  category: main
+  optional: false
 - name: libsqlite
   version: 3.51.2
   manager: conda
@@ -397,6 +601,18 @@ package:
   hash:
     md5: 1b08cd684f34175e4514474793d44bcb
     sha256: 78668020064fdaa27e9ab65cd2997e2c837b564ab26ce3bf0e58a2ce1a525c6e
+  category: main
+  optional: false
+- name: libstdcxx-devel_linux-64
+  version: 14.3.0
+  manager: conda
+  platform: linux-64
+  dependencies:
+    __unix: ''
+  url: https://conda.anaconda.org/conda-forge/noarch/libstdcxx-devel_linux-64-14.3.0-h9f08a49_118.conda
+  hash:
+    md5: 865a399bce236119301ebd1532fced8d
+    sha256: b1c3824769b92a1486bf3e2cc5f13304d83ae613ea061b7bc47bb6080d6dfdba
   category: main
   optional: false
 - name: libuuid
@@ -625,6 +841,20 @@ package:
   hash:
     md5: c1c9b02933fdb2cfb791d936c20e887e
     sha256: d5c73079c1dd2c2a313c3bfd81c73dbd066b7eb08d213778c8bff520091ae894
+  category: main
+  optional: false
+- name: sysroot_linux-64
+  version: '2.28'
+  manager: conda
+  platform: linux-64
+  dependencies:
+    __glibc: '>=2.28'
+    kernel-headers_linux-64: 4.18.0
+    tzdata: ''
+  url: https://conda.anaconda.org/conda-forge/noarch/sysroot_linux-64-2.28-h4ee821c_9.conda
+  hash:
+    md5: 13dc3adbc692664cd3beabd216434749
+    sha256: c47299fe37aebb0fcf674b3be588e67e4afb86225be4b0d452c7eb75c086b851
   category: main
   optional: false
 - name: tk
