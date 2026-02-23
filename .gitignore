@@ -1,5 +1,8 @@
+# conda
 environment.yml
+*.lock_environment.yml
 
+# Folders
 build/
 artifacts/
 .vscode/

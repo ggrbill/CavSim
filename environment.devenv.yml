@@ -1,14 +1,17 @@
-name: CavSim
+name: cavsim-dev
 channels:
 - conda-forge
 - defaults
+platforms:
+- win-64
+- linux-64
 dependencies:
-- python=3.7.3
-- pytest=5.4.3
-- invoke=1.4.1
-- cmake>=3.18
-- ninja=1.9
-- pybind11=2.2.4
+- python
+- pytest
+- invoke
+- cmake
+- ninja
+- pybind11
 environment:
   PYTHONPATH:
     - {{root}}/src/python
