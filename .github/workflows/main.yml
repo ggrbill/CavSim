@@ -14,8 +14,8 @@ jobs:
     steps:
     - uses: actions/checkout@v2
 
-    - name: Install conda-devenv
-      run: conda install conda-devenv -c conda-forge
+    - name: Install conda-devenv and conda-lock
+      run: conda install -c conda-forge conda-devenv conda-lock
     
     - name: Create Conda Environment
       run: |
