@@ -5,9 +5,10 @@ The lid-driven cavity simulator
 ## Development Environment
 
 This project is based in a `conda` environment using `conda-devenv` and `conda-lock` tools. For all basic tools instalation:
-- `conda` basic package: Dor `miniconda` installation follow the instructions [here](https://conda.io/miniconda.html)
+- `conda` basic package: For `miniconda` installation follow the instructions [here](https://conda.io/miniconda.html)
 - `conda-devenv` package: Installation instructions click [here](https://conda-devenv.readthedocs.io/en/latest/installation.html) and 
 - `conda-lock` package: Installation instructions click [here](https://conda.github.io/conda-lock/). 
+
 It is important to note that `conda-devenv` and `conda-lock` MUST be installed in the `base` conda environment to allow the usage in this project.
 
 ### Setup and Environment Activation
@@ -35,4 +36,4 @@ If you want to update all libraries to the latest version, pass an "" (empty) va
 ```shell
 $ conda devenv --update-locks ""
 ```
-All these instructions are available in the `conda-devenv` [documentation](https://conda-devenv.readthedocs.io/en/latest/usage.html#locking)
+All these instructions are available in the `conda-devenv` [documentation](https://conda-devenv.readthedocs.io/en/latest/usage.html#locking).
