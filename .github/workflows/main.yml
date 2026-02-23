@@ -23,15 +23,15 @@ jobs:
     
     - name: Build
       run: |
-        source $CONDA/bin/activate CavSim
+        source $CONDA/bin/activate cavsim-dev
         inv build
 
     - name: Test
       run: |
-        source $CONDA/bin/activate CavSim
+        source $CONDA/bin/activate cavsim-dev
         pytest
 
     - name: Run example case
       run: |
-        source $CONDA/bin/activate CavSim
+        source $CONDA/bin/activate cavsim-dev
         inv run-case-ex
