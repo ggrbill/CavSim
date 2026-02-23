@@ -13,7 +13,7 @@
 version: 1
 metadata:
   content_hash:
-    win-64: a30e0b0899635558fb22d2554908835620df352ea9e1d4233cda6131d227b161
+    win-64: 4c6078d86db7acce239285a9459314019f66aa6bc3af984ee76de4a8ef17f3c7
   channels:
   - url: conda-forge
     used_env_vars: []
@@ -36,6 +36,18 @@ package:
   hash:
     md5: 4cb8e6b48f67de0b018719cdf1136306
     sha256: 76dfb71df5e8d1c4eded2dbb5ba15bb8fb2e2b0fe42d94145d5eed4c75c35902
+  category: main
+  optional: false
+- name: c-compiler
+  version: 1.11.0
+  manager: conda
+  platform: win-64
+  dependencies:
+    vs2022_win-64: ''
+  url: https://conda.anaconda.org/conda-forge/win-64/c-compiler-1.11.0-h528c1b4_0.conda
+  hash:
+    md5: 6d994ff9ab924ba11c2c07e93afbe485
+    sha256: 55e04bd4af61500cb8cae064386be57d18fbfdf676655ff1c97c7e5d146c6e34
   category: main
   optional: false
 - name: ca-certificates
@@ -80,6 +92,18 @@ package:
   hash:
     md5: 962b9857ee8e7018c22f2776ffa0b2d7
     sha256: ab29d57dc70786c1269633ba3dff20288b81664d3ff8d21af995742e2bb03287
+  category: main
+  optional: false
+- name: cxx-compiler
+  version: 1.11.0
+  manager: conda
+  platform: win-64
+  dependencies:
+    vs2022_win-64: ''
+  url: https://conda.anaconda.org/conda-forge/win-64/cxx-compiler-1.11.0-h1c1089f_0.conda
+  hash:
+    md5: 4d94d3c01add44dc9d24359edf447507
+    sha256: c888f4fe9ec117c1c01bfaa4c722ca475ebbb341c92d1718afa088bb0d710619
   category: main
   optional: false
 - name: exceptiongroup
@@ -507,6 +531,30 @@ package:
   hash:
     md5: 242d9f25d2ae60c76b38a5e42858e51d
     sha256: 878d5d10318b119bd98ed3ed874bd467acbe21996e1d81597a1dbf8030ea0ce6
+  category: main
+  optional: false
+- name: vs2022_win-64
+  version: 19.44.35207
+  manager: conda
+  platform: win-64
+  dependencies:
+    vswhere: ''
+  url: https://conda.anaconda.org/conda-forge/win-64/vs2022_win-64-19.44.35207-ha74f236_34.conda
+  hash:
+    md5: 1d699ffd41c140b98e199ddd9787e1e1
+    sha256: 05bc657625b58159bcea039a35cc89d1f8baf54bf4060019c2b559a03ba4a45e
+  category: main
+  optional: false
+- name: vswhere
+  version: 3.1.7
+  manager: conda
+  platform: win-64
+  dependencies:
+    __win: ''
+  url: https://conda.anaconda.org/conda-forge/noarch/vswhere-3.1.7-h40126e0_1.conda
+  hash:
+    md5: f622897afff347b715d046178ad745a5
+    sha256: b72270395326dc56de9bd6ca82f63791b3c8c9e2b98e25242a9869a4ca821895
   category: main
   optional: false
 - name: zstd
