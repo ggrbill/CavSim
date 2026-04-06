@@ -137,7 +137,7 @@ def run_case_ex(ctx, verbose=False):
 	Run an example case.
 	"""
 	project_name, project_pwd = get_project_name_and_folder()
-	orig_folder = project_pwd + '/src/cpp/inCav.txt '
+	orig_folder = project_pwd + '/data/inCav.txt '
 	dest_folder = project_pwd + '/artifacts/'
 
 	dest_folder_exists = os.path.isdir(dest_folder) and os.path.exists(dest_folder)
@@ -156,3 +156,26 @@ def run_case_ex(ctx, verbose=False):
 	print_color(colors.YELLOW, '>>> Running! <<<')
 	ctx.run(' && '.join(commands))
 	print_color(colors.YELLOW, '>>> Finished! <<<')
+
+
+@task(
+	help = {
+		'verbose': "Run pytest in verbose mode.",
+	}
+)
+def test(ctx, verbose=False):
+	"""
+	Run pytest tests.
+	"""
+	project_name, project_pwd = get_project_name_and_folder()
+	
+	pytest_args = '-v' if verbose else ''
+	
+	commands = [
+		'cd ' + project_pwd,
+		f'pytest {pytest_args}',
+	]
+	
+	print_color(colors.BLUE, '>>> Running tests! <<<')
+	ctx.run(' && '.join(commands))
+	print_color(colors.BLUE, '>>> Tests completed! <<<')

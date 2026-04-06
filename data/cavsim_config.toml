@@ -1,0 +1,13 @@
+[domain_dimensions]
+length = 1.0
+height = 1.0
+
+[physical_properties]
+density = 1.0
+viscosity = 0.01
+lid_velocity = 200.0
+
+[numerical_properties]
+nx = 10
+ny = 10
+solver_tolerance = 1e-4
