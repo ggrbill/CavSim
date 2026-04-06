@@ -11,6 +11,9 @@ platforms:
 dependencies:
 # Python
 - python
+- numpy
+- matplotlib
+- tomli
 - pytest
 - invoke
 
