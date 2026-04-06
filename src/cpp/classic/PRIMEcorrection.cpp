@@ -106,15 +106,15 @@ void correct_u_v(
 	int nv,
 	double dx,
 	double dy,
-	DoubleArray2D&Pn,
-	DoubleArray2D&Ap_u,
-	DoubleArray2D&u_old,
-	DoubleArray2D&u_hat,
-	DoubleArray2D&u,
-	DoubleArray2D&Ap_v,
-	DoubleArray2D&v_old,
-	DoubleArray2D&v_hat,
-	DoubleArray2D&v
+	DoubleArray2D& Pn,
+	DoubleArray2D& Ap_u,
+	DoubleArray2D& u_old,
+	DoubleArray2D& u_hat,
+	DoubleArray2D& u,
+	DoubleArray2D& Ap_v,
+	DoubleArray2D& v_old,
+	DoubleArray2D& v_hat,
+	DoubleArray2D& v
 )
 {
 	// Correct x-velocity u

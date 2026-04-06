@@ -7,16 +7,16 @@ void calculate_velocity_coeficients_X(
     int nv,
     double dx,
     double dy,
-    DoubleArray2D&u,
-    DoubleArray2D&v,
-    FacesArray2D&alpha_x,
-    FacesArray2D&beta_x,
-    DoubleArray2D&Ap_u,
-    DoubleArray2D&Ae_u,
-    DoubleArray2D&Aw_u,
-    DoubleArray2D&As_u,
-    DoubleArray2D&An_u,
-    DoubleArray2D&B_u
+    DoubleArray2D& u,
+    DoubleArray2D& v,
+    FacesArray2D& alpha_x,
+    FacesArray2D& beta_x,
+    DoubleArray2D& Ap_u,
+    DoubleArray2D& Ae_u,
+    DoubleArray2D& Aw_u,
+    DoubleArray2D& As_u,
+    DoubleArray2D& An_u,
+    DoubleArray2D& B_u
 ) 
 {
 	// Left-bottom corner
@@ -116,16 +116,16 @@ void calculate_velocity_coeficients_Y(
     int nv,
     double dx,
     double dy,
-    DoubleArray2D&u,
-    DoubleArray2D&v,
-    FacesArray2D&alpha_y,
-    FacesArray2D&beta_y,
-    DoubleArray2D&Ap_v,
-    DoubleArray2D&Ae_v,
-    DoubleArray2D&Aw_v,
-    DoubleArray2D&As_v,
-    DoubleArray2D&An_v,
-    DoubleArray2D&B_v
+    DoubleArray2D& u,
+    DoubleArray2D& v,
+    FacesArray2D& alpha_y,
+    FacesArray2D& beta_y,
+    DoubleArray2D& Ap_v,
+    DoubleArray2D& Ae_v,
+    DoubleArray2D& Aw_v,
+    DoubleArray2D& As_v,
+    DoubleArray2D& An_v,
+    DoubleArray2D& B_v
 )
 {
 	// Left-bottom corner
