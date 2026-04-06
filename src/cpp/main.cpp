@@ -44,8 +44,7 @@ int main()
 	int n_x = nv;
 	int n_y = nv;
 
-	CavSimAux a(n_x, n_y);
-	CavSimData d(n_x, n_y);
+	PrimeCoefficients p_coeffs(n_x, n_y);
 	CavSimResult r(n_x, n_y);
 
 	int saving_interval = 500;
@@ -55,25 +54,25 @@ int main()
 	while (true)
 	{
 		cout << IT << " ";
-		calculate_WUDS_coefficients_X(rho, mi, nv, dx, dy, r.u, r.v, a.alpha_x, a.beta_x);
-		calculate_WUDS_coefficients_Y(rho, mi, nv, dx, dy, r.u, r.v, a.alpha_y, a.beta_y);
+		calculate_WUDS_coefficients_X(rho, mi, nv, dx, dy, r.u, r.v, p_coeffs.alpha_x, p_coeffs.beta_x);
+		calculate_WUDS_coefficients_Y(rho, mi, nv, dx, dy, r.u, r.v, p_coeffs.alpha_y, p_coeffs.beta_y);
 		
-		calculate_velocity_coeficients_X(U, rho, mi, nv, dx, dy, r.u, r.v, a.alpha_x, a.beta_x,
-										 d.Ap_u, d.Ae_u, d.Aw_u, d.As_u, d.An_u, d.B_u); 
-		calculate_velocity_coeficients_Y(rho, mi, nv, dx, dy, r.u, r.v, a.alpha_y, a.beta_y,
-										 d.Ap_v, d.Ae_v, d.Aw_v, d.As_v, d.An_v, d.B_v); 
+		calculate_velocity_coeficients_X(U, rho, mi, nv, dx, dy, r.u, r.v, p_coeffs.alpha_x, p_coeffs.beta_x,
+										 p_coeffs.Ap_u, p_coeffs.Ae_u, p_coeffs.Aw_u, p_coeffs.As_u, p_coeffs.An_u, p_coeffs.B_u); 
+		calculate_velocity_coeficients_Y(rho, mi, nv, dx, dy, r.u, r.v, p_coeffs.alpha_y, p_coeffs.beta_y,
+										 p_coeffs.Ap_v, p_coeffs.Ae_v, p_coeffs.Aw_v, p_coeffs.As_v, p_coeffs.An_v, p_coeffs.B_v); 
 		
-		calculate_u_hat(nv, d.Ap_u, d.Ae_u, d.Aw_u, d.As_u, d.An_u, d.B_u, r.u, r.u_hat);
-		calculate_v_hat(nv, d.Ap_v, d.Ae_v, d.Aw_v, d.As_v, d.An_v, d.B_v, r.v, r.v_hat);
+		calculate_u_hat(nv, p_coeffs.Ap_u, p_coeffs.Ae_u, p_coeffs.Aw_u, p_coeffs.As_u, p_coeffs.An_u, p_coeffs.B_u, r.u, r.u_hat);
+		calculate_v_hat(nv, p_coeffs.Ap_v, p_coeffs.Ae_v, p_coeffs.Aw_v, p_coeffs.As_v, p_coeffs.An_v, p_coeffs.B_v, r.v, r.v_hat);
 		
-		calculate_pressure_coefficients(nv, dx, dy, rho, r.u_hat, r.v_hat, d.Ap_u, d.Ap_v,
-										d.Ap_p, d.Ae_p, d.Aw_p, d.As_p, d.An_p, d.B_p);
+		calculate_pressure_coefficients(nv, dx, dy, rho, r.u_hat, r.v_hat, p_coeffs.Ap_u, p_coeffs.Ap_v,
+										p_coeffs.Ap_p, p_coeffs.Ae_p, p_coeffs.Aw_p, p_coeffs.As_p, p_coeffs.An_p, p_coeffs.B_p);
 		SOR_structured(
-			d.Ap_p, d.Aw_p, d.Ae_p, d.An_p, d.As_p,
-			r.P, r.Pn, d.B_p, 
+			p_coeffs.Ap_p, p_coeffs.Aw_p, p_coeffs.Ae_p, p_coeffs.An_p, p_coeffs.As_p,
+			r.P, r.Pn, p_coeffs.B_p, 
 			nv, 50, 1.6
 		);	
-		correct_u_v(nv, dx, dy, r.Pn, d.Ap_u, r.u_old, r.u_hat, r.u, d.Ap_v, r.v_old, r.v_hat, r.v);
+		correct_u_v(nv, dx, dy, r.Pn, p_coeffs.Ap_u, r.u_old, r.u_hat, r.u, p_coeffs.Ap_v, r.v_old, r.v_hat, r.v);
 
 		double error_u = calculate_vec_diff_L2_norm(r.u, r.u_old, n_x-1, n_y);
 		double error_v = calculate_vec_diff_L2_norm(r.v, r.v_old, n_x, n_y-1);

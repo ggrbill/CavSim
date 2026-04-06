@@ -1,8 +1,12 @@
 #include "Structures.hpp"
 
 
-CavSimData::CavSimData(int n_x, int n_y)
-    : Ap_u(n_x - 1, std::vector<double>(n_y, 0.0)),
+PrimeCoefficients::PrimeCoefficients(int n_x, int n_y)
+    : alpha_x(n_x - 1, std::vector<Faces>(n_y)),
+      beta_x(n_x - 1, std::vector<Faces>(n_y)),
+      alpha_y(n_x, std::vector<Faces>(n_y - 1)),
+      beta_y(n_x, std::vector<Faces>(n_y - 1)),
+      Ap_u(n_x - 1, std::vector<double>(n_y, 0.0)),
       Aw_u(n_x - 1, std::vector<double>(n_y, 0.0)),
       Ae_u(n_x - 1, std::vector<double>(n_y, 0.0)),
       An_u(n_x - 1, std::vector<double>(n_y, 0.0)),
@@ -30,9 +34,3 @@ CavSimResult::CavSimResult(int n_x, int n_y)
       v_hat(n_x, std::vector<double>(n_y - 1, 0.0)),
       P(n_x, std::vector<double>(n_y, 0.0)),
       Pn(n_x, std::vector<double>(n_y, 0.0)) {}
-
-CavSimAux::CavSimAux(int n_x, int n_y)
-    : alpha_x(n_x - 1, std::vector<Faces>(n_y)),
-      beta_x(n_x - 1, std::vector<Faces>(n_y)),
-      alpha_y(n_x, std::vector<Faces>(n_y - 1)),
-      beta_y(n_x, std::vector<Faces>(n_y - 1)) {}
