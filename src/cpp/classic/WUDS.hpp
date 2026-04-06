@@ -16,10 +16,10 @@ void calculate_WUDS_coefficients_X(
     int nv,
     double dx,
     double dy,
-    double** u,
-    double** v,
-    CVBoundaries** alpha_x,
-    CVBoundaries** beta_x);
+    DoubleArray2D& u,
+    DoubleArray2D& v,
+    FacesArray2D& alpha_x,
+    FacesArray2D& beta_x);
 
 /*!
     Calculates Alpha and Beta Coefficients of WUDS scheme.
@@ -34,10 +34,10 @@ void calculate_WUDS_coefficients_Y(
     int nv,
     double dx,
     double dy,
-    double** u,
-    double** v,
-    CVBoundaries** alpha_y,
-    CVBoundaries** beta_y);
+    DoubleArray2D& u,
+    DoubleArray2D& v,
+    FacesArray2D& alpha_y,
+    FacesArray2D& beta_y);
 
 
 #endif

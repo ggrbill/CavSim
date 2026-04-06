@@ -8,13 +8,13 @@ void calculate_WUDS_coefficients_X(
     int nv,
     double dx,
     double dy,
-    double** u,
-    double** v,
-    CVBoundaries** alpha_x,
-    CVBoundaries** beta_x)
+    DoubleArray2D& u,
+    DoubleArray2D& v,
+    FacesArray2D& alpha_x,
+    FacesArray2D& beta_x)
 {
 
-    CVBoundaries Re;
+    Faces Re;
 	// Left-bottom corner
 	Re.e = (rho*((u[0][0]+u[1][0])/2.)*dx)/mi;
 	Re.n = (rho*((v[0][0]+v[1][0])/2.)*dy)/mi;
@@ -212,13 +212,13 @@ void calculate_WUDS_coefficients_Y(
     int nv,
     double dx,
     double dy,
-    double** u,
-    double** v,
-    CVBoundaries** alpha_y,
-    CVBoundaries** beta_y)
+    DoubleArray2D& u,
+    DoubleArray2D& v,
+    FacesArray2D& alpha_y,
+    FacesArray2D& beta_y)
 {
 
-    CVBoundaries Re;
+    Faces Re;
 	// Left-bottom corner
 	Re.e = (rho*((u[0][0]+u[0][1])/2.)*dy)/mi;
 	Re.n = (rho*((v[0][1]+v[0][0])/2.)*dy)/mi;

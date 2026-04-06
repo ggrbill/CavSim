@@ -2,7 +2,7 @@
 
 #include <math.h>
 
-double calculate_vec_diff_L2_norm(double** v1, double** v2, int nx, int ny)
+double calculate_vec_diff_L2_norm(DoubleArray2D& v1, DoubleArray2D& v2, int nx, int ny)
 {
     double norm = 0.;
 	for(int i=0;i<nx;i++)

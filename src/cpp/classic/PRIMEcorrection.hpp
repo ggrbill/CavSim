@@ -1,6 +1,8 @@
 #ifndef PRIME_CORRECTION_HPP
 #define PRIME_CORRECTION_HPP
 
+#include "Structures.hpp"
+
 /*!
     Calculates correction velocity in x direction (u_hat).
     
@@ -9,14 +11,14 @@
 */
 void calculate_u_hat(
     int nv,
-    double** Ap_u,
-    double** Ae_u,
-    double** Aw_u,
-    double** As_u,
-    double** An_u,
-    double** B_u,
-    double** u,
-    double** u_hat
+    DoubleArray2D& Ap_u,
+    DoubleArray2D& Ae_u,
+    DoubleArray2D& Aw_u,
+    DoubleArray2D& As_u,
+    DoubleArray2D& An_u,
+    DoubleArray2D& B_u,
+    DoubleArray2D& u,
+    DoubleArray2D& u_hat
 );
 
 /*!
@@ -27,14 +29,14 @@ void calculate_u_hat(
 */
 void calculate_v_hat(
     int nv,
-    double** Ap_v,
-    double** Ae_v,
-    double** Aw_v,
-    double** As_v,
-    double** An_v,
-    double** B_v,
-    double** v,
-    double** v_hat
+    DoubleArray2D& Ap_v,
+    DoubleArray2D& Ae_v,
+    DoubleArray2D& Aw_v,
+    DoubleArray2D& As_v,
+    DoubleArray2D& An_v,
+    DoubleArray2D& B_v,
+    DoubleArray2D& v,
+    DoubleArray2D& v_hat
 );
 
 /*!
@@ -47,15 +49,15 @@ void correct_u_v(
 	int nv,
 	double dx,
 	double dy,
-	double **Pn,
-	double **Ap_u,
-	double **uOLD,
-	double **u_hat,
-	double **u,
-	double **Ap_v,
-	double **vOLD,
-	double **v_hat,
-	double **v
+	DoubleArray2D& Pn,
+	DoubleArray2D& Ap_u,
+	DoubleArray2D& u_old,
+	DoubleArray2D& u_hat,
+	DoubleArray2D& u,
+	DoubleArray2D& Ap_v,
+	DoubleArray2D& v_old,
+	DoubleArray2D& v_hat,
+	DoubleArray2D& v
 );
 
 #endif
