@@ -2,6 +2,7 @@
 #define CAVITY_HPP
 
 #include<memory>
+#include "classic/Structures.hpp"
 
 class CavitySetup
 {
@@ -29,9 +30,12 @@ class Cavity
 public:
     Cavity(std::shared_ptr<CavitySetup> setup);
     ~Cavity() {}
+    void run_simulation();
 
 protected:
     std::shared_ptr<CavitySetup> setup;
+    std::shared_ptr<PrimeCoefficients> p_coeffs;
+    std::shared_ptr<CavSimResult> results;
 
 private:
 

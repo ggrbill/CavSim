@@ -5,7 +5,7 @@
 
 using DoubleArray2D = std::vector<std::vector<double>>;
 
-// Control Volume Boundaries interpolation
+// Control Volume Faces interpolation
 struct Faces{
 	double e = 0.0;
 	double w = 0.0;
@@ -13,21 +13,18 @@ struct Faces{
 	double s = 0.0;
 };
 
+// Coefficients for interpolation at control-volume faces.
 using FacesArray2D = std::vector<std::vector<Faces>>;
 
-struct CavSimAux{
-	CavSimAux(int n_x, int n_y);
-	~CavSimAux() = default;
+struct PrimeCoefficients{
+	PrimeCoefficients(int n_x, int n_y);
+	~PrimeCoefficients() = default;
 
+	// WUDS interpolation coefficients
 	FacesArray2D alpha_x;
 	FacesArray2D beta_x;
 	FacesArray2D alpha_y;
 	FacesArray2D beta_y;
-};
-
-struct CavSimData{
-	CavSimData(int n_x, int n_y);
-	~CavSimData() = default;
 
 	// Coefficients Matrices
 	// x-velocity - u

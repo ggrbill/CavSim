@@ -51,7 +51,7 @@ def clean(ctx):
 		print_color(colors.YELLOW, 'Impossible to delete build or artifacts folder. Your current directory is one of them.')
 		return
 
-	project_name, project_pwd = get_project_name_and_folder()
+	_, project_pwd = get_project_name_and_folder()
 
 	print_color(colors.GREEN, ">>> Cleaning! <<<")
 	commands = [
@@ -88,7 +88,7 @@ def build(ctx, cclean=False, sys='ninja'):
 		},
 	}
 
-	project_name, project_pwd = get_project_name_and_folder()
+	_, project_pwd = get_project_name_and_folder()
 
 	if cclean:
 		clean(ctx)
@@ -167,7 +167,7 @@ def test(ctx, verbose=False):
 	"""
 	Run pytest tests.
 	"""
-	project_name, project_pwd = get_project_name_and_folder()
+	_, project_pwd = get_project_name_and_folder()
 	
 	pytest_args = '-v' if verbose else ''
 	
@@ -179,3 +179,27 @@ def test(ctx, verbose=False):
 	print_color(colors.BLUE, '>>> Running tests! <<<')
 	ctx.run(' && '.join(commands))
 	print_color(colors.BLUE, '>>> Tests completed! <<<')
+
+
+@task(
+	help = {
+		'nv': "Number of divisions (x and y directions) to plot the grid.",
+	}
+)
+def plot_case_ex(ctx, nv=10):
+	"""
+	Run pytest tests.
+	"""
+	if nv <= 0:
+		print_color(colors.YELLOW, 'Parameter nv should be a positive integer.')
+
+	_, project_pwd = get_project_name_and_folder()
+
+	commands = [
+		'cd ' + project_pwd,
+		f'python src/python/plot_pressure.py artifacts/outCav.csv {nv}',
+	]
+
+	print_color(colors.GREEN, '>>> Plotting the pressure field in the grid! <<<')
+	ctx.run(' && '.join(commands))
+	print_color(colors.GREEN, '>>> Plotting completed! <<<')

@@ -37,5 +37,10 @@ PYBIND11_MODULE(_CavSim, m) {
         c.def_readonly("mu", &T::mu);
         c.def_readonly("U", &T::U);
     }
+    {
+        using T = Cavity;
+        py::class_<T, std::shared_ptr<T> > c(m, "Cavity");
+        c.def(py::init<std::shared_ptr<CavitySetup>>(), py::arg("setup"));
+        c.def("run_simulation", &T::run_simulation);
+    }
 }
-

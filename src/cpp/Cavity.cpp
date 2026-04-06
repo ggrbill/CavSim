@@ -1,4 +1,5 @@
 #include "Cavity.hpp"
+#include <stdexcept>
 
 CavitySetup::CavitySetup(
     double length, 
@@ -22,4 +23,11 @@ CavitySetup::CavitySetup(
 
 Cavity::Cavity(std::shared_ptr<CavitySetup> setup)
 : setup(setup)
+, p_coeffs(std::make_shared<PrimeCoefficients>(setup->n_x, setup->n_y))
+, results(std::make_shared<CavSimResult>(setup->n_x, setup->n_y))
 {}
+
+void Cavity::run_simulation()
+{
+    throw std::logic_error("Cavity::run_simulation is not implemented yet.");
+}

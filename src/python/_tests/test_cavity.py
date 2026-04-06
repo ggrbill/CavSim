@@ -66,3 +66,11 @@ class TestCavitySetup:
 		assert abs(cav_setup.rho - 900.0) < 1e-10, "Density should be 900.0"
 		assert abs(cav_setup.mu - 0.001002) < 1e-10, "Viscosity should be 0.001002"
 		assert abs(cav_setup.U - 10.0) < 1e-10, "Lid velocity should be 10.0"
+
+	def test_cavity_run_simulation_not_implemented(self, create_cavity_setup):
+		"""Test that Cavity.run_simulation raises not implemented error."""
+		from _CavSim import Cavity
+
+		cavity = Cavity(create_cavity_setup)
+		with pytest.raises(RuntimeError, match="not implemented"):
+			cavity.run_simulation()
