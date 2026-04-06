@@ -1,6 +1,8 @@
 #ifndef NUMERIC_H
 #define NUMERIC_H
 
+#include "Structures.hpp"
+
 /*!
     Calculates L2 norm of a difference between two vectors.
     
@@ -10,6 +12,6 @@
 
     result = |v1-v2|_l2
 */
-double calculate_vec_diff_L2_norm(double** v1, double** v2, int nx, int ny);
+double calculate_vec_diff_L2_norm(DoubleArray2D& v1, DoubleArray2D& v2, int nx, int ny);
 
 #endif

@@ -73,10 +73,10 @@ int main()
 			r.P, r.Pn, d.B_p, 
 			nv, 50, 1.6
 		);	
-		correct_u_v(nv, dx, dy, r.Pn, d.Ap_u, r.uOLD, r.u_hat, r.u, d.Ap_v, r.vOLD, r.v_hat, r.v);
+		correct_u_v(nv, dx, dy, r.Pn, d.Ap_u, r.u_old, r.u_hat, r.u, d.Ap_v, r.v_old, r.v_hat, r.v);
 
-		double error_u = calculate_vec_diff_L2_norm(r.u, r.uOLD, n_x-1, n_y);
-		double error_v = calculate_vec_diff_L2_norm(r.v, r.vOLD, n_x, n_y-1);
+		double error_u = calculate_vec_diff_L2_norm(r.u, r.u_old, n_x-1, n_y);
+		double error_v = calculate_vec_diff_L2_norm(r.v, r.v_old, n_x, n_y-1);
 		cout <<"error -u:" << setw(7) << setprecision(5) << error_u
 			 << " -v:" << setw(7) << setprecision(5) << error_v << endl;
 		

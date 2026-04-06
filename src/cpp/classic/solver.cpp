@@ -4,14 +4,14 @@
 #include "solver.hpp"
 
 void SOR_structured(
-    double** Ap,
-    double** Aw,
-    double** Ae,
-    double** An,
-    double** As, 
-    double** x,
-    double** xn,
-    double** b, 
+    DoubleArray2D& Ap,
+    DoubleArray2D& Aw,
+    DoubleArray2D& Ae,
+    DoubleArray2D& An,
+    DoubleArray2D& As, 
+    DoubleArray2D& x,
+    DoubleArray2D& xn,
+    DoubleArray2D& b, 
     int const size,
     int const MAX_IT, 
     float const w, // relaxation factor

@@ -31,9 +31,9 @@ std::tuple<double, double, int, double, double, double> read_input_data(std::str
 
 void save_results_tecplot(
 	std::string filename, 
-	double** u,
-	double** v,
-	double** Pn,
+	DoubleArray2D& u,
+	DoubleArray2D& v,
+	DoubleArray2D& Pn,
 	double nv, // For while it is assuming that n_x is equal to n_y
 	double dx,
 	double dy,
@@ -167,9 +167,9 @@ void save_results_tecplot(
 
 void save_results_csv(
 	std::string filename, 
-	double** u,
-	double** v,
-	double** Pn,
+	DoubleArray2D& u,
+	DoubleArray2D& v,
+	DoubleArray2D& Pn,
 	int nv, // Number of divisions in each direction (x and y)
 	double dx,
 	double dy,

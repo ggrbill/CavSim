@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <tuple>
+#include "Structures.hpp"
 
 /*!
     Input data reader.
@@ -14,9 +15,9 @@ std::tuple<double, double, int, double, double, double> read_input_data(std::str
 */
 void save_results_tecplot(
     std::string filename, 
-	double** u,
-	double** v,
-	double** Pn,
+	DoubleArray2D& u,
+	DoubleArray2D& v,
+	DoubleArray2D& Pn,
 	double nv,
 	double dx,
 	double dy,
@@ -27,9 +28,9 @@ void save_results_tecplot(
 */
 void save_results_csv(
     std::string filename, 
-	double** u,
-	double** v,
-	double** Pn,
+	DoubleArray2D& u,
+	DoubleArray2D& v,
+	DoubleArray2D& Pn,
 	int nv,
 	double dx,
 	double dy,

@@ -5,16 +5,16 @@ void calculate_pressure_coefficients(
     double dx,
     double dy,
     double rho,
-    double **u_hat,
-    double **v_hat,
-    double **Ap_u,
-    double **Ap_v,
-    double **Ap_p,
-    double **Ae_p,
-    double **Aw_p,
-    double **As_p,
-    double **An_p,
-    double **B_p
+    DoubleArray2D&u_hat,
+    DoubleArray2D&v_hat,
+    DoubleArray2D&Ap_u,
+    DoubleArray2D&Ap_v,
+    DoubleArray2D&Ap_p,
+    DoubleArray2D&Ae_p,
+    DoubleArray2D&Aw_p,
+    DoubleArray2D&As_p,
+    DoubleArray2D&An_p,
+    DoubleArray2D&B_p
 )
 {
 	// Left-up corner
