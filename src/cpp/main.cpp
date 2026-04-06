@@ -33,6 +33,7 @@ int main()
 {
 	std:: string filename_input = "./inCav.txt";
 	std:: string filename_results = "./outCav.txt";
+    std:: string filename_results_csv = "./outCav.csv";
 	
 	std::tie(L, H, nv, rho, U, mi) = read_input_data(filename_input);
 
@@ -81,7 +82,7 @@ int main()
 		
 		if((IT % saving_interval) == 0) {
 			cout << endl << "......Saving Partial Solution....." << endl;
-			save_results(filename_results, r.u, r.v, r.Pn, nv, dx, dy, U);
+			save_results_tecplot(filename_results, r.u, r.v, r.Pn, nv, dx, dy, U);
 		}
 		
 		IT++;
@@ -92,5 +93,6 @@ int main()
 			break;
 		}
 	}
-	save_results(filename_results, r.u, r.v, r.Pn, nv, dx, dy, U);
+	save_results_tecplot(filename_results, r.u, r.v, r.Pn, nv, dx, dy, U);
+	save_results_csv(filename_results_csv, r.u, r.v, r.Pn, nv, dx, dy, U);
 }
