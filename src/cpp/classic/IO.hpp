@@ -12,12 +12,25 @@ std::tuple<double, double, int, double, double, double> read_input_data(std::str
 /*!
     Tecplot format Saver of results.
 */
-void save_results(
+void save_results_tecplot(
     std::string filename, 
 	double** u,
 	double** v,
 	double** Pn,
 	double nv,
+	double dx,
+	double dy,
+	double U);
+
+/*!
+    CSV format Saver of results.
+*/
+void save_results_csv(
+    std::string filename, 
+	double** u,
+	double** v,
+	double** Pn,
+	int nv,
 	double dx,
 	double dy,
 	double U);

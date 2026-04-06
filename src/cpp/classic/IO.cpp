@@ -29,7 +29,7 @@ std::tuple<double, double, int, double, double, double> read_input_data(std::str
 		viscosity);
 }
 
-void save_results(
+void save_results_tecplot(
 	std::string filename, 
 	double** u,
 	double** v,
@@ -162,5 +162,41 @@ void save_results(
 	}
 
 	fout << std::endl;
+	fout.close();
+}
+
+void save_results_csv(
+	std::string filename, 
+	double** u,
+	double** v,
+	double** Pn,
+	int nv, // Number of divisions in each direction (x and y)
+	double dx,
+	double dy,
+	double U)
+{	
+	std::ofstream fout;
+	fout.open(filename);
+	fout << "x,y,u,v,p" << std::endl;
+	
+	// Save nv*nv points (volumes)
+	// nv divisions in x-direction, nv divisions in y-direction
+	for (int j = 0; j < nv; j++) {
+		for (int i = 0; i < nv; i++) {
+			double x = (i + 0.5) * dx;
+			double y = (j + 0.5) * dy;
+			double u_val = 0.0;
+			double v_val = 0.0;
+			if (i < nv - 1) {
+				u_val = u[i][j] / U;
+			}
+			if (j < nv - 1) {
+				v_val = v[i][j] / U;
+			}
+			double p_val = Pn[i][j];
+			fout << std::scientific << x << "," << y << "," << u_val << "," << v_val << "," << p_val << std::endl;
+		}
+	}
+	
 	fout.close();
 }
